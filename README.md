@@ -1,63 +1,66 @@
 # Assessly
 
-A modern assessment platform built with Vue.js and TypeScript.
+## Team
 
-## Features
+| Name           | Email                             | UTORid   |
+|----------------|-----------------------------------|----------|
+| Ahmad Hakim    | ahmad.hakim@mail.utoronto.ca      | hakimahm |
+| Ansh Aneel     | ansh.aneel@mail.utoronto.ca       | aneelans |
 
-- ✅ Vue 3 with Composition API
-- ✅ TypeScript support
-- ✅ Vite for fast development and building
-- ✅ Modern development tooling
+## Project Description
 
-## Getting Started
+**Assessly** will let hiring teams set up custom developer assessments and let candidates complete them, capturing their screen activity and AI tool usage as they tackle a given task. A built-in voice assistant reads the prompt aloud and answers questions on demand, ensuring candidates stay focused while maintaining a clear record of their thought process. Recruiters can tailor each assessment’s criteria to match their needs, and companies subscribe to monthly tiered plans based on the number of assessments and candidates they require. After each session, hiring managers simply log into a dashboard to see a candidate’s summary of performance, making it easy to identify the most productive, AI-savvy developers.
 
-### Prerequisites
+## Tech Stack
 
-- Node.js (version 16 or higher)
-- npm or yarn
+- **Frontend**: Vue.js
+- **Backend**: Express
+- **Database**: PostgreSQL
 
-### Installation
+## Additional Requirement
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+**Real-time interaction:** The candidate’s screen is shared with the agent as they work. At the same time, the voice agent listens and responds immediately whenever the candidate asks a question, creating a seamless, live conversation during the assessment.
 
-### Development
+## Milestones
 
-Start the development server:
-```bash
-npm run dev
-```
+### 🔹 Alpha Version
 
-The application will be available at `http://localhost:5173`
+- **User Authentication & Authorization**  
+  Implement sign-in/sign-up functionality using OAuth 2.0.
 
-### Building for Production
+- **Recruiter Dashboard**  
+  Authenticated recruiters can create, manage, and share assessments.
 
-Build the application:
-```bash
-npm run build
-```
+- **Assessment Overview**  
+  Recruiters can view invited candidates for each assessment.
 
-Preview the production build:
-```bash
-npm run preview
-```
+- **Candidate Experience**  
+  Candidates can complete their assigned assessments with voice assistant support.
 
-## Project Structure
+> 🔸 *Note: No payment system in this phase. Recruiters access features upon sign-in.*
 
-```
-src/
-├── components/          # Vue components
-├── App.vue             # Main application component
-├── main.ts             # Application entry point
-├── style.css           # Global styles
-└── vite-env.d.ts       # TypeScript declarations
-```
+### 🔹 Beta Version
 
-## Technology Stack
+- **Payment System**  
+  Recruiters must subscribe to a monthly plan to access the platform.
 
-- **Vue 3** - Progressive JavaScript framework
-- **TypeScript** - Type-safe JavaScript
-- **Vite** - Fast build tool and development server
+- **AI-Based Assessment Metrics (Phase 1)**  
+  The AI agent scores candidates on:
+  - Task completion time  
+  - External tool usage (e.g., Stack Overflow, LLM prompts, Docs)
+
+- **Assessment Analytics Dashboard**  
+  Recruiters can view completed assessments and metric-based scores for each candidate.
+
+### 🔹 Final Version
+
+- **Expanded Assessment Metrics**  
+  Additional evaluation criteria:
+  - Code correctness  
+  - Communication clarity
+
+- **UI Enhancements**  
+  Final refinements to the platform interface.
+
+- **Comprehensive Testing**  
+  Security and usability testing.
