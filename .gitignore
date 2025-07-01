@@ -115,3 +115,5 @@ temp/
 
 # SvelteKit build
 .svelte-kit 
+# Ignore original React source code
+src copy/
