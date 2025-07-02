@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useAssessments } from '@/composables/useAssessments'
 import { siteConfig } from '@/data/siteConfig'
 import AssessmentCard from '@/components/AssessmentCard.vue'
+import LiveAssistant from '@/components/LiveAssistant.vue'
 
 const router = useRouter()
 const { assessments, stats } = useAssessments()
@@ -103,6 +104,18 @@ const navigateToAssessments = () => {
             </svg>
           </button>
         </div>
+      </div>
+    </section>
+
+    <!-- Live Assistant Section -->
+    <section class="py-16 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-gray-900">AI Live Assistant</h2>
+          <p class="mt-4 text-lg text-gray-600">Get instant help with assessments using our AI-powered assistant</p>
+        </div>
+        
+        <LiveAssistant />
       </div>
     </section>
 
