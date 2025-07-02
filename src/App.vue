@@ -1,19 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { siteConfig } from '@/data/siteConfig'
 
 const route = useRoute()
 const router = useRouter()
 
-const isHomePage = computed(() => route.name === 'Home')
-
 const navigateHome = () => {
   router.push('/')
-}
-
-const navigateToAssessments = () => {
-  router.push('/assessments')
 }
 </script>
 
@@ -53,6 +47,15 @@ const navigateToAssessments = () => {
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'"
               >
                 Assessments
+              </router-link>
+              <router-link
+                to="/live-assistant"
+                class="px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                :class="route.name === 'LiveAssistant'
+                  ? 'bg-blue-100 text-blue-700' 
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'"
+              >
+                AI Assistant
               </router-link>
             </div>
           </div>
@@ -101,6 +104,11 @@ const navigateToAssessments = () => {
               <li>
                 <router-link to="/assessments" class="text-gray-600 hover:text-blue-600 transition-colors">
                   Assessments
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/live-assistant" class="text-gray-600 hover:text-blue-600 transition-colors">
+                  AI Assistant
                 </router-link>
               </li>
             </ul>
