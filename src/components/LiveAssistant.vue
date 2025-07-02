@@ -71,15 +71,43 @@
             </svg>
           </button>
           
+          <!-- Screen Share Button -->
+          <button
+            @click="toggleScreenShare"
+            :class="[
+              'p-3 rounded-full transition-colors',
+              screenCapture.isStreaming.value 
+                ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+            ]"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </button>
+          
           <!-- Status Indicators -->
           <div class="flex items-center space-x-3">
             <div v-if="isRecording" class="flex items-center space-x-2">
               <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
               <span class="text-sm text-gray-600">Recording...</span>
+              <!-- Volume indicator -->
+              <div class="flex items-center space-x-1">
+                <div class="w-8 h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    class="h-full bg-green-500 transition-all duration-75"
+                    :style="{ width: `${Math.min(volume * 100, 100)}%` }"
+                  ></div>
+                </div>
+              </div>
             </div>
             <div v-if="isSpeaking" class="flex items-center space-x-2">
               <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span class="text-sm text-gray-600">AI Speaking...</span>
+            </div>
+            <div v-if="screenCapture.isStreaming.value" class="flex items-center space-x-2">
+              <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <span class="text-sm text-gray-600">Sharing Screen</span>
             </div>
           </div>
         </div>
@@ -157,6 +185,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useLiveAPI } from '@/composables/useLiveAPI'
+import { useScreenCapture } from '@/composables/useScreenCapture'
 import { formatLogMessage, getLogLevelColor } from '@/utils/liveapi-utils'
 import type { LiveConfig } from '@/types/liveapi'
 import { SchemaType } from '@google/generative-ai'
@@ -168,6 +197,9 @@ const textMessage = ref('')
 // Live API instance
 let liveAPIInstance: ReturnType<typeof useLiveAPI> | null = null
 
+// Screen capture
+const screenCapture = useScreenCapture()
+
 // Reactive state
 const connected = ref(false)
 const connecting = ref(false)
@@ -175,6 +207,7 @@ const logs = ref<any[]>([])
 const error = ref<string | null>(null)
 const isRecording = ref(false)
 const isSpeaking = ref(false)
+const volume = ref(0)
 
 // Get API key from localStorage on mount
 onMounted(() => {
@@ -223,6 +256,10 @@ const handleConnect = async () => {
       isSpeaking.value = newVal
     }, { immediate: true })
 
+    watch(liveAPIInstance.volume, (newVal) => {
+      volume.value = newVal
+    }, { immediate: true })
+
     // Connect
     await liveAPIInstance.connect()
   } catch (err) {
@@ -243,6 +280,56 @@ const toggleRecording = async () => {
     liveAPIInstance.stopRecording()
   } else {
     await liveAPIInstance.startRecording()
+  }
+}
+
+const toggleScreenShare = async () => {
+  if (!liveAPIInstance) return
+
+  if (screenCapture.isStreaming.value) {
+    screenCapture.stop()
+  } else {
+    try {
+      const stream = await screenCapture.start()
+      
+      // Send screen frames to the AI
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      const video = document.createElement('video')
+      
+      video.srcObject = stream
+      video.play()
+      
+      const sendFrame = () => {
+        if (!screenCapture.isStreaming.value) return
+        
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        ctx?.drawImage(video, 0, 0)
+        
+        canvas.toBlob((blob) => {
+          if (blob && liveAPIInstance) {
+            const reader = new FileReader()
+            reader.onload = () => {
+              const base64 = (reader.result as string).split(',')[1]
+                             liveAPIInstance?.client.value?.sendRealtimeInput([{
+                mimeType: 'image/jpeg',
+                data: base64
+              }])
+            }
+            reader.readAsDataURL(blob)
+          }
+        }, 'image/jpeg', 0.8)
+        
+        setTimeout(sendFrame, 1000) // Send frame every second
+      }
+      
+      video.onloadedmetadata = () => {
+        sendFrame()
+      }
+    } catch (err) {
+      console.error('Screen capture failed:', err)
+    }
   }
 }
 
