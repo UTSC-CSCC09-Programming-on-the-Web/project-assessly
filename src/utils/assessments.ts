@@ -94,7 +94,7 @@ function applyFilters(assessments: Assessment[], filters: AssessmentFilters): As
  * Get unique assessment types
  */
 export function getAssessmentTypes(): string[] {
-  const types = new Set(assessments.map(a => a.type).filter(Boolean))
+  const types = new Set(assessments.map(a => a.type).filter(Boolean) as string[])
   return Array.from(types).sort()
 }
 
@@ -102,7 +102,7 @@ export function getAssessmentTypes(): string[] {
  * Get unique assessment statuses
  */
 export function getAssessmentStatuses(): string[] {
-  const statuses = new Set(assessments.map(a => a.status).filter(Boolean))
+  const statuses = new Set(assessments.map(a => a.status).filter(Boolean) as string[])
   return Array.from(statuses).sort()
 }
 

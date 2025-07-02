@@ -8,7 +8,6 @@ const {
   assessments, 
   loading, 
   error, 
-  filters,
   currentPage,
   totalPages,
   totalAssessments,
@@ -20,7 +19,7 @@ const {
   prevPage
 } = useAssessments()
 
-const { types, statuses, authors } = useAssessmentMeta()
+const { types, statuses } = useAssessmentMeta()
 
 // Local filter state
 const searchQuery = ref('')
@@ -32,8 +31,8 @@ const selectedAuthor = ref('')
 const applyFilters = () => {
   setFilters({
     searchQuery: searchQuery.value || undefined,
-    type: selectedType.value || undefined,
-    status: selectedStatus.value || undefined,
+    type: (selectedType.value as any) || undefined,
+    status: (selectedStatus.value as any) || undefined,
     author: selectedAuthor.value || undefined,
   })
 }

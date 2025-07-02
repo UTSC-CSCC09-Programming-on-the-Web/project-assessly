@@ -27,6 +27,14 @@ const routes: RouteRecordRaw[] = [
     },
     props: true
   },
+  {
+    path: '/live-assistant',
+    name: 'LiveAssistant',
+    component: () => import('@/views/LiveAssistantView.vue'),
+    meta: {
+      title: 'AI Live Assistant - Assessly'
+    }
+  },
   // Redirect from old paths
   {
     path: '/assessment/:slug',
@@ -49,7 +57,7 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(_to, _from, savedPosition) {
     // Always scroll to top when navigating to a new page
     if (savedPosition) {
       return savedPosition
@@ -61,7 +69,7 @@ const router = createRouter({
 // Navigation guards
 router.beforeEach((to) => {
   // Update document title
-  document.title = to.meta.title as string || 'Assessly'
+  document.title = (to.meta?.title as string) || 'Assessly'
 })
 
 export default router 

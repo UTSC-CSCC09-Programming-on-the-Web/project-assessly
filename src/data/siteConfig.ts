@@ -1,5 +1,5 @@
 import type { SiteConfig } from '@/types/assessment'
-
+ 
 export const siteConfig: SiteConfig = {
   name: 'Assessly',
   url: 'https://assessly.com',
