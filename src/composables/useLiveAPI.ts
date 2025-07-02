@@ -1,5 +1,8 @@
 import { ref, computed, onUnmounted, readonly, type Ref } from 'vue'
+import { SchemaType } from '@google/generative-ai'
 import { MultimodalLiveClient } from '@/lib/multimodal-live-client'
+import { AudioRecorder } from '@/lib/audio-recorder'
+import { AudioStreamer } from '@/lib/audio-streamer'
 import type { 
   LiveConfig, 
   StreamingLog, 
@@ -23,14 +26,32 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
   const currentConfig: Ref<LiveConfig | null> = ref(null)
 
   // Audio state
+  const audioRecorder: Ref<AudioRecorder | null> = ref(null)
+  const audioStreamer: Ref<AudioStreamer | null> = ref(null)
   const audioContext: Ref<AudioContext | null> = ref(null)
   const isRecording = ref(false)
   const isSpeaking = ref(false)
+  const volume = ref(0)
 
   // Computed properties
   const canConnect = computed(() => !connected.value && !connecting.value)
   const canDisconnect = computed(() => connected.value || connecting.value)
   const recentLogs = computed(() => logs.value.slice(-50)) // Keep last 50 logs
+
+  // Initialize audio context and streamer
+  const initializeAudio = async () => {
+    if (!audioContext.value) {
+      audioContext.value = new AudioContext({ sampleRate: 24000 })
+      await audioContext.value.resume()
+    }
+    
+    if (!audioStreamer.value) {
+      audioStreamer.value = new AudioStreamer(audioContext.value)
+      audioStreamer.value.onComplete = () => {
+        isSpeaking.value = false
+      }
+    }
+  }
 
   // Initialize client
   const initializeClient = () => {
@@ -55,6 +76,7 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
       connecting.value = false
       isRecording.value = false
       isSpeaking.value = false
+      stopRecording()
     })
 
     newClient.on('error', (err: Error) => {
@@ -78,7 +100,10 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
 
     newClient.on('audio', async (audioBuffer: ArrayBuffer) => {
       // Handle audio response from the AI
-      await playAudio(audioBuffer)
+      isSpeaking.value = true
+      if (audioStreamer.value) {
+        audioStreamer.value.addPCM16(new Uint8Array(audioBuffer))
+      }
     })
 
     newClient.on('toolcall', (toolCall: ToolCall) => {
@@ -91,11 +116,16 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
     })
 
     newClient.on('turncomplete', () => {
-      isSpeaking.value = false
+      if (audioStreamer.value) {
+        audioStreamer.value.complete()
+      }
     })
 
     newClient.on('interrupted', () => {
       isSpeaking.value = false
+      if (audioStreamer.value) {
+        audioStreamer.value.stop()
+      }
       console.log('Turn interrupted')
     })
 
@@ -111,6 +141,8 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
     try {
       connecting.value = true
       error.value = null
+      
+      await initializeAudio()
       
       if (!client.value) {
         initializeClient()
@@ -129,6 +161,9 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
     if (client.value) {
       client.value.disconnect()
       stopRecording()
+      if (audioStreamer.value) {
+        audioStreamer.value.stop()
+      }
       if (audioContext.value) {
         audioContext.value.close()
         audioContext.value = null
@@ -148,44 +183,24 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
     if (!connected.value || isRecording.value) return
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          sampleRate: 16000,
-          channelCount: 1,
-          echoCancellation: true,
-          noiseSuppression: true
-        }
-      })
-
-      if (!audioContext.value) {
-        audioContext.value = new AudioContext({ sampleRate: 16000 })
-      }
-
-      const source = audioContext.value.createMediaStreamSource(stream)
-      const processor = audioContext.value.createScriptProcessor(4096, 1, 1)
-
-      processor.onaudioprocess = (event) => {
-        if (client.value && connected.value && isRecording.value) {
-          const inputBuffer = event.inputBuffer.getChannelData(0)
-          
-          // Convert to PCM16
-          const pcm16 = new Int16Array(inputBuffer.length)
-          for (let i = 0; i < inputBuffer.length; i++) {
-            pcm16[i] = Math.max(-32768, Math.min(32767, inputBuffer[i] * 32768))
+      if (!audioRecorder.value) {
+        audioRecorder.value = new AudioRecorder(16000)
+        
+        audioRecorder.value.on('data', (base64Data: string) => {
+          if (client.value && connected.value && isRecording.value) {
+            client.value.sendRealtimeInput([{
+              mimeType: 'audio/pcm',
+              data: base64Data
+            }])
           }
+        })
 
-          // Convert to base64 and send
-          const base64Audio = arrayBufferToBase64(pcm16.buffer)
-          client.value.sendRealtimeInput([{
-            mimeType: 'audio/pcm',
-            data: base64Audio
-          }])
-        }
+        audioRecorder.value.on('volume', (vol: number) => {
+          volume.value = vol
+        })
       }
 
-      source.connect(processor)
-      processor.connect(audioContext.value.destination)
-      
+      await audioRecorder.value.start()
       isRecording.value = true
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to start recording'
@@ -194,31 +209,12 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
 
   // Stop audio recording
   const stopRecording = () => {
+    if (audioRecorder.value) {
+      audioRecorder.value.stop()
+      audioRecorder.value = null
+    }
     isRecording.value = false
-  }
-
-  // Play audio response
-  const playAudio = async (audioBuffer: ArrayBuffer) => {
-    if (!audioContext.value) {
-      audioContext.value = new AudioContext({ sampleRate: 24000 })
-    }
-
-    try {
-      isSpeaking.value = true
-      const audioData = await audioContext.value.decodeAudioData(audioBuffer)
-      const source = audioContext.value.createBufferSource()
-      source.buffer = audioData
-      source.connect(audioContext.value.destination)
-      
-      source.onended = () => {
-        isSpeaking.value = false
-      }
-      
-      source.start()
-    } catch (err) {
-      console.error('Error playing audio:', err)
-      isSpeaking.value = false
-    }
+    volume.value = 0
   }
 
   // Handle tool calls
@@ -242,18 +238,26 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
   }
 
   // Execute a function (extensible)
-  const executeFunction = async (name: string, _args: any): Promise<any> => {
+  const executeFunction = async (name: string, args: any): Promise<any> => {
     switch (name) {
       case 'get_current_time':
         return { time: new Date().toLocaleTimeString() }
       
       case 'search_assessments':
         // This could integrate with your assessment system
+        const query = args?.query || ''
+        const type = args?.type || ''
         return { 
+          query,
+          type,
           results: [
-            { title: 'Assessment 1', type: 'Technical' },
-            { title: 'Assessment 2', type: 'Research' }
-          ]
+            { title: 'Technical Assessment Guide', type: 'Technical', status: 'Available' },
+            { title: 'Research Methodology', type: 'Research', status: 'Available' },
+            { title: 'Creative Writing Standards', type: 'Creative', status: 'Available' }
+          ].filter(item => 
+            (!query || item.title.toLowerCase().includes(query.toLowerCase())) &&
+            (!type || item.type === type)
+          )
         }
       
       default:
@@ -266,17 +270,22 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
     logs.value = []
   }
 
-  // Utility function for base64 conversion
-  const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
-    const bytes = new Uint8Array(buffer)
-    let binary = ''
-    bytes.forEach(byte => binary += String.fromCharCode(byte))
-    return btoa(binary)
-  }
-
   // Default configuration
   const getDefaultConfig = (): LiveConfig => ({
     model: 'models/gemini-2.0-flash-exp',
+    systemInstruction: {
+      parts: [{
+        text: `You are an AI assistant for Assessly, an assessment management platform. You help users with:
+        
+        - Finding and filtering assessments
+        - Understanding assessment requirements
+        - Providing study guidance
+        - Answering questions about assessment formats
+        - Helping with technical and research assessments
+        
+        Be helpful, concise, and focused on education and assessment topics. If users ask about topics outside assessments, politely redirect them back to assessment-related help.`
+      }]
+    },
     generationConfig: {
       responseModalities: 'audio',
       speechConfig: {
@@ -284,7 +293,38 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
           prebuiltVoiceConfig: { voiceName: 'Aoede' }
         }
       }
-    }
+    },
+    tools: [
+      {
+        functionDeclarations: [
+          {
+            name: 'search_assessments',
+            description: 'Search for assessments in the platform',
+                         parameters: {
+               type: SchemaType.OBJECT,
+               properties: {
+                 query: {
+                   type: SchemaType.STRING,
+                   description: 'Search query for assessments'
+                 },
+                 type: {
+                   type: SchemaType.STRING,
+                   description: 'Assessment type filter'
+                 }
+               }
+             }
+          },
+          {
+            name: 'get_current_time',
+            description: 'Get the current time',
+                         parameters: {
+               type: SchemaType.OBJECT,
+               properties: {}
+             }
+          }
+        ]
+      }
+    ]
   })
 
   // Initialize on mount
@@ -312,6 +352,7 @@ export function useLiveAPI(options: UseLiveAPIOptions) {
     // Audio state
     isRecording: readonly(isRecording),
     isSpeaking: readonly(isSpeaking),
+    volume: readonly(volume),
     
     // Computed
     canConnect,
