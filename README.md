@@ -2,10 +2,10 @@
 
 ## Team
 
-| Name           | Email                             | UTORid   |
-|----------------|-----------------------------------|----------|
-| Ahmad Hakim    | ahmad.hakim@mail.utoronto.ca      | hakimahm |
-| Ansh Aneel     | ansh.aneel@mail.utoronto.ca       | aneelans |
+| Name        | Email                        | UTORid   |
+| ----------- | ---------------------------- | -------- |
+| Ahmad Hakim | ahmad.hakim@mail.utoronto.ca | hakimahm |
+| Ansh Aneel  | ansh.aneel@mail.utoronto.ca  | aneelans |
 
 ## Project Description
 
@@ -37,7 +37,7 @@
 - **Candidate Experience**  
   Candidates can complete their assigned assessments with voice assistant support.
 
-> 🔸 *Note: No payment system in this phase. Recruiters access features upon sign-in.*
+> 🔸 _Note: No payment system in this phase. Recruiters access features upon sign-in._
 
 ### 🔹 Beta Version
 
@@ -46,7 +46,7 @@
 
 - **AI-Based Assessment Metrics (Phase 1)**  
   The AI agent scores candidates on:
-  - Task completion time  
+  - Task completion time
   - External tool usage (e.g., Stack Overflow, LLM prompts, Docs)
 
 - **Assessment Analytics Dashboard**  
@@ -56,7 +56,7 @@
 
 - **Expanded Assessment Metrics**  
   Additional evaluation criteria:
-  - Code correctness  
+  - Code correctness
   - Communication clarity
 
 - **UI Enhancements**  

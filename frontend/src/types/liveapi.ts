@@ -139,4 +139,4 @@ export const isInterrupted = (a: any): a is Interrupted =>
 export type MultimodalLiveAPIClientConnection = {
   url?: string;
   apiKey: string;
-}; 
+};

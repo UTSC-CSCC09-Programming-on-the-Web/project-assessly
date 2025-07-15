@@ -1,19 +1,20 @@
-import type { Assessment } from '@/types/assessment'
+import type { Assessment } from "@/types/assessment";
 
 export const assessments: Assessment[] = [
   {
     id: 1,
-    slug: 'introducing-acme-ai',
-    title: 'Introducing Acme.ai',
-    publishedAt: '2024-08-29',
-    summary: 'Introducing Acme.ai, a cutting-edge AI solution for modern businesses.',
-    author: 'dillionverma',
-    image: '/introducing.png',
-    type: 'Technical content',
-    status: 'Done',
-    target: '18',
-    limit: '5',
-    reviewer: 'Eddie Lake',
+    slug: "introducing-acme-ai",
+    title: "Introducing Acme.ai",
+    publishedAt: "2024-08-29",
+    summary:
+      "Introducing Acme.ai, a cutting-edge AI solution for modern businesses.",
+    author: "dillionverma",
+    image: "/introducing.png",
+    type: "Technical content",
+    status: "Done",
+    target: "18",
+    limit: "5",
+    reviewer: "Eddie Lake",
     content: `
 We're excited to unveil **Acme.ai**, an innovative AI-powered platform designed to transform your business operations and skyrocket productivity. 🚀
 
@@ -60,21 +61,22 @@ Getting started with Acme.ai is seamless:
 1. Sign up for a demo
 2. Integrate your data sources
 3. Start unlocking AI-driven insights
-    `
+    `,
   },
   {
     id: 2,
-    slug: 'technical-approach',
-    title: 'Technical Approach',
-    publishedAt: '2024-08-25',
-    summary: 'Comprehensive technical approach and architecture overview for modern assessment systems.',
-    author: 'jamik',
-    image: '/technical-approach.png',
-    type: 'Narrative',
-    status: 'Done',
-    target: '27',
-    limit: '23',
-    reviewer: 'Jamik Tashpulatov',
+    slug: "technical-approach",
+    title: "Technical Approach",
+    publishedAt: "2024-08-25",
+    summary:
+      "Comprehensive technical approach and architecture overview for modern assessment systems.",
+    author: "jamik",
+    image: "/technical-approach.png",
+    type: "Narrative",
+    status: "Done",
+    target: "27",
+    limit: "23",
+    reviewer: "Jamik Tashpulatov",
     content: `
 # Technical Approach
 
@@ -111,21 +113,22 @@ Our platform utilizes containerized deployment with:
 - OAuth 2.0 authentication
 - Role-based access control
 - Regular security audits
-    `
+    `,
   },
   {
     id: 3,
-    slug: 'user-interface-design',
-    title: 'User Interface Design',
-    publishedAt: '2024-08-20',
-    summary: 'Modern UI/UX design principles and accessibility guidelines for assessment platforms.',
-    author: 'sarah_chen',
-    image: '/ui-design.png',
-    type: 'Visual',
-    status: 'In Process',
-    target: '19',
-    limit: '25',
-    reviewer: 'Leila Ahmadi',
+    slug: "user-interface-design",
+    title: "User Interface Design",
+    publishedAt: "2024-08-20",
+    summary:
+      "Modern UI/UX design principles and accessibility guidelines for assessment platforms.",
+    author: "sarah_chen",
+    image: "/ui-design.png",
+    type: "Visual",
+    status: "In Process",
+    target: "19",
+    limit: "25",
+    reviewer: "Leila Ahmadi",
     content: `
 # User Interface Design Guidelines
 
@@ -161,21 +164,22 @@ We use a custom component library built on top of modern design tokens:
 - **Forms**: Accessible form controls
 - **Cards**: Flexible content containers
 - **Navigation**: Intuitive navigation patterns
-    `
+    `,
   },
   {
     id: 4,
-    slug: 'assessment-methodology',
-    title: 'Assessment Methodology',
-    publishedAt: '2024-08-15',
-    summary: 'Comprehensive assessment methodology and evaluation frameworks for educational institutions.',
-    author: 'maya_johnson',
-    image: '/methodology.png',
-    type: 'Research',
-    status: 'Done',
-    target: '15',
-    limit: '22',
-    reviewer: 'Maya Johnson',
+    slug: "assessment-methodology",
+    title: "Assessment Methodology",
+    publishedAt: "2024-08-15",
+    summary:
+      "Comprehensive assessment methodology and evaluation frameworks for educational institutions.",
+    author: "maya_johnson",
+    image: "/methodology.png",
+    type: "Research",
+    status: "Done",
+    target: "15",
+    limit: "22",
+    reviewer: "Maya Johnson",
     content: `
 # Assessment Methodology
 
@@ -222,21 +226,22 @@ Our platform integrates various technologies:
 - Statistical analysis of results
 - Regular methodology updates
 - Stakeholder feedback integration
-    `
+    `,
   },
   {
     id: 5,
-    slug: 'data-security-compliance',
-    title: 'Data Security & Compliance',
-    publishedAt: '2024-08-10',
-    summary: 'Comprehensive data security measures and compliance frameworks for educational data protection.',
-    author: 'carlos_rodriguez',
-    image: '/security.png',
-    type: 'Legal',
-    status: 'In Process',
-    target: '31',
-    limit: '27',
-    reviewer: 'Sarah Chen',
+    slug: "data-security-compliance",
+    title: "Data Security & Compliance",
+    publishedAt: "2024-08-10",
+    summary:
+      "Comprehensive data security measures and compliance frameworks for educational data protection.",
+    author: "carlos_rodriguez",
+    image: "/security.png",
+    type: "Legal",
+    status: "In Process",
+    target: "31",
+    limit: "27",
+    reviewer: "Sarah Chen",
     content: `
 # Data Security & Compliance
 
@@ -292,6 +297,6 @@ Our platform incorporates privacy considerations from the ground up:
 - Purpose limitation
 - Transparency and user control
 - Regular privacy impact assessments
-    `
-  }
-] 
+    `,
+  },
+];
