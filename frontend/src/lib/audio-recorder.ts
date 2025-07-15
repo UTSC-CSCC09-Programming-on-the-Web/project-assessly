@@ -91,13 +91,16 @@ class VolMeterProcessor extends AudioWorkletProcessor {
 registerProcessor('vol-meter', VolMeterProcessor);
 `;
 
-function createWorkletFromSrc(_workletName: string, workletSrc: string): string {
-  const blob = new Blob([workletSrc], { type: 'application/javascript' });
+function createWorkletFromSrc(
+  _workletName: string,
+  workletSrc: string,
+): string {
+  const blob = new Blob([workletSrc], { type: "application/javascript" });
   return URL.createObjectURL(blob);
 }
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  let binary = '';
+  let binary = "";
   const bytes = new Uint8Array(buffer);
   const len = bytes.byteLength;
   for (let i = 0; i < len; i++) {
@@ -127,19 +130,19 @@ export class AudioRecorder extends EventEmitter {
 
     this.starting = new Promise(async (resolve, reject) => {
       try {
-        this.stream = await navigator.mediaDevices.getUserMedia({ 
+        this.stream = await navigator.mediaDevices.getUserMedia({
           audio: {
             sampleRate: this.sampleRate,
             channelCount: 1,
             echoCancellation: true,
             noiseSuppression: true,
-            autoGainControl: true
-          } 
+            autoGainControl: true,
+          },
         });
-        
+
         this.audioContext = new AudioContext({ sampleRate: this.sampleRate });
         await this.audioContext.resume();
-        
+
         this.source = this.audioContext.createMediaStreamSource(this.stream);
 
         const workletName = "audio-recorder-worklet";
@@ -166,7 +169,7 @@ export class AudioRecorder extends EventEmitter {
         const vuWorkletName = "vol-meter";
         const vuSrc = createWorkletFromSrc(vuWorkletName, VolMeterWorklet);
         await this.audioContext.audioWorklet.addModule(vuSrc);
-        
+
         this.vuWorklet = new AudioWorkletNode(this.audioContext, vuWorkletName);
         this.vuWorklet.port.onmessage = (ev: MessageEvent) => {
           this.emit("volume", ev.data.volume);
@@ -200,11 +203,11 @@ export class AudioRecorder extends EventEmitter {
         this.audioContext = undefined;
       }
     };
-    
+
     if (this.starting) {
       this.starting.then(handleStop).catch(handleStop);
       return;
     }
     handleStop();
   }
-} 
+}

@@ -1,9 +1,9 @@
 {
   "name": "backend",
   "version": "1.0.0",
-	"scripts": {
-		"dev": "tsx --watch app.ts"
-	},
+  "scripts": {
+    "dev": "tsx --watch app.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

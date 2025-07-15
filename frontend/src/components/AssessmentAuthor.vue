@@ -1,28 +1,30 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { formatDate } from '@/utils/assessments'
+import { computed } from "vue";
+import { formatDate } from "@/utils/assessments";
 
 interface Props {
-  name: string
-  image: string
-  twitterUsername?: string
-  updatedAt?: string
-  imageOnly?: boolean
+  name: string;
+  image: string;
+  twitterUsername?: string;
+  updatedAt?: string;
+  imageOnly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   twitterUsername: undefined,
   updatedAt: undefined,
-  imageOnly: false
-})
+  imageOnly: false,
+});
 
 const isExternalLink = computed(() => {
-  return props.twitterUsername && !props.imageOnly
-})
+  return props.twitterUsername && !props.imageOnly;
+});
 
 const twitterUrl = computed(() => {
-  return props.twitterUsername ? `https://twitter.com/${props.twitterUsername}` : undefined
-})
+  return props.twitterUsername
+    ? `https://twitter.com/${props.twitterUsername}`
+    : undefined;
+});
 </script>
 
 <template>
@@ -36,17 +38,10 @@ const twitterUrl = computed(() => {
 
   <!-- Updated at variant -->
   <div v-else-if="updatedAt" class="flex items-center space-x-3">
-    <img
-      :src="image"
-      :alt="name"
-      class="w-9 h-9 rounded-full"
-    />
+    <img :src="image" :alt="name" class="w-9 h-9 rounded-full" />
     <div class="flex flex-col">
       <p class="text-sm text-gray-500">Written by {{ name }}</p>
-      <time
-        :datetime="updatedAt"
-        class="text-sm font-light text-gray-400"
-      >
+      <time :datetime="updatedAt" class="text-sm font-light text-gray-400">
         Last updated {{ formatDate(updatedAt) }}
       </time>
     </div>
@@ -61,7 +56,7 @@ const twitterUrl = computed(() => {
     :rel="isExternalLink ? 'noopener noreferrer' : undefined"
     :class="[
       'flex items-center space-x-3',
-      isExternalLink ? 'group hover:opacity-90 transition-opacity' : ''
+      isExternalLink ? 'group hover:opacity-90 transition-opacity' : '',
     ]"
   >
     <img
@@ -91,4 +86,4 @@ const twitterUrl = computed(() => {
       />
     </svg>
   </component>
-</template> 
+</template>
