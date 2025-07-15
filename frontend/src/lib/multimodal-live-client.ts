@@ -46,18 +46,19 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
   public ws: WebSocket | null = null;
   protected config: LiveConfig | null = null;
   public url: string = "";
-  
+
   public getConfig() {
     return { ...this.config };
   }
 
   constructor({ url, apiKey }: MultimodalLiveAPIClientConnection) {
     super();
-    
-    const baseUrl = url || 
+
+    const baseUrl =
+      url ||
       `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
     this.url = `${baseUrl}?key=${apiKey}`;
-    
+
     this.send = this.send.bind(this);
   }
 
@@ -94,14 +95,14 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
       };
 
       ws.addEventListener("error", onError);
-      
+
       ws.addEventListener("open", () => {
         if (!this.config) {
           const error = new Error("Invalid config sent to connect()");
           reject(error);
           return;
         }
-        
+
         this.log(`client.open`, `Connected to socket`);
         this.emit("open");
 
@@ -114,26 +115,29 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
         this.log("client.send", "setup");
 
         ws.removeEventListener("error", onError);
-        
+
         ws.addEventListener("close", (ev: CloseEvent) => {
           this.disconnect(ws);
           let reason = ev.reason || "";
-          
+
           if (reason.toLowerCase().includes("error")) {
             const prelude = "ERROR]";
             const preludeIndex = reason.indexOf(prelude);
             if (preludeIndex > 0) {
-              reason = reason.slice(preludeIndex + prelude.length + 1, Infinity);
+              reason = reason.slice(
+                preludeIndex + prelude.length + 1,
+                Infinity,
+              );
             }
           }
-          
+
           this.log(
             `server.close`,
-            `Disconnected ${reason ? `with reason: ${reason}` : ``}`
+            `Disconnected ${reason ? `with reason: ${reason}` : ``}`,
           );
           this.emit("close", ev);
         });
-        
+
         resolve(true);
       });
     });
@@ -151,8 +155,10 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
 
   protected async receive(blob: Blob) {
     try {
-      const response: LiveIncomingMessage = await blobToJSON(blob) as LiveIncomingMessage;
-      
+      const response: LiveIncomingMessage = (await blobToJSON(
+        blob,
+      )) as LiveIncomingMessage;
+
       if (isToolCallMessage(response)) {
         this.log("server.toolCall", response);
         this.emit("toolcall", response.toolCall);
@@ -167,13 +173,13 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
 
       if (isServerContentMessage(response)) {
         const { serverContent } = response;
-        
+
         if (isInterrupted(serverContent)) {
           this.log("receive.serverContent", "interrupted");
           this.emit("interrupted");
           return;
         }
-        
+
         if (isTurnComplete(serverContent)) {
           this.log("server.turnComplete", "turnComplete");
           this.emit("turncomplete");
@@ -184,7 +190,8 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
 
           // Handle audio parts
           const audioParts = parts.filter(
-            (p) => p.inlineData && p.inlineData.mimeType.startsWith("audio/pcm")
+            (p) =>
+              p.inlineData && p.inlineData.mimeType.startsWith("audio/pcm"),
           );
           const base64s = audioParts.map((p) => p.inlineData?.data);
 
@@ -223,7 +230,7 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
   sendRealtimeInput(chunks: GenerativeContentBlob[]) {
     let hasAudio = false;
     let hasVideo = false;
-    
+
     for (const chunk of chunks) {
       if (chunk.mimeType.includes("audio")) {
         hasAudio = true;
@@ -236,20 +243,21 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
       }
     }
 
-    const message = hasAudio && hasVideo 
-      ? "audio + video" 
-      : hasAudio 
-        ? "audio" 
-        : hasVideo 
-          ? "video" 
-          : "unknown";
+    const message =
+      hasAudio && hasVideo
+        ? "audio + video"
+        : hasAudio
+          ? "audio"
+          : hasVideo
+            ? "video"
+            : "unknown";
 
     const data: RealtimeInputMessage = {
       realtimeInput: {
         mediaChunks: chunks,
       },
     };
-    
+
     this._sendDirect(data);
     this.log(`client.realtimeInput`, message);
   }
@@ -297,4 +305,4 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
     const str = JSON.stringify(request);
     this.ws.send(str);
   }
-} 
+}

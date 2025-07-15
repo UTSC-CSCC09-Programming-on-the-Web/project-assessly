@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useAssessments, useAssessmentMeta } from '@/composables/useAssessments'
-import { siteConfig } from '@/data/siteConfig'
-import AssessmentCard from '@/components/AssessmentCard.vue'
+import { ref, computed } from "vue";
+import {
+  useAssessments,
+  useAssessmentMeta,
+} from "@/composables/useAssessments";
+import { siteConfig } from "@/data/siteConfig";
+import AssessmentCard from "@/components/AssessmentCard.vue";
 
-const { 
-  assessments, 
-  loading, 
-  error, 
+const {
+  assessments,
+  loading,
+  error,
   currentPage,
   totalPages,
   totalAssessments,
@@ -16,16 +19,16 @@ const {
   clearFilters,
   setPage,
   nextPage,
-  prevPage
-} = useAssessments()
+  prevPage,
+} = useAssessments();
 
-const { types, statuses } = useAssessmentMeta()
+const { types, statuses } = useAssessmentMeta();
 
 // Local filter state
-const searchQuery = ref('')
-const selectedType = ref('')
-const selectedStatus = ref('')
-const selectedAuthor = ref('')
+const searchQuery = ref("");
+const selectedType = ref("");
+const selectedStatus = ref("");
+const selectedAuthor = ref("");
 
 // Apply filters
 const applyFilters = () => {
@@ -34,43 +37,48 @@ const applyFilters = () => {
     type: (selectedType.value as any) || undefined,
     status: (selectedStatus.value as any) || undefined,
     author: selectedAuthor.value || undefined,
-  })
-}
+  });
+};
 
 // Clear all filters
 const handleClearFilters = () => {
-  searchQuery.value = ''
-  selectedType.value = ''
-  selectedStatus.value = ''
-  selectedAuthor.value = ''
-  clearFilters()
-}
+  searchQuery.value = "";
+  selectedType.value = "";
+  selectedStatus.value = "";
+  selectedAuthor.value = "";
+  clearFilters();
+};
 
 // Watch for changes and apply filters
 const handleSearch = () => {
-  applyFilters()
-}
+  applyFilters();
+};
 
 const hasActiveFilters = computed(() => {
-  return searchQuery.value || selectedType.value || selectedStatus.value || selectedAuthor.value
-})
+  return (
+    searchQuery.value ||
+    selectedType.value ||
+    selectedStatus.value ||
+    selectedAuthor.value
+  );
+});
 
 const isEmpty = computed(() => {
-  return !loading.value && assessments.value.length === 0
-})
+  return !loading.value && assessments.value.length === 0;
+});
 
 // Pagination helpers
 const pageNumbers = computed(() => {
-  const pages = []
-  const maxPagesToShow = 5
-  const start = Math.max(1, currentPage.value - Math.floor(maxPagesToShow / 2))
-  const end = Math.min(totalPages.value, start + maxPagesToShow - 1)
-  
+  const pages = [];
+  const maxPagesToShow = 5;
+  const start = Math.max(1, currentPage.value - Math.floor(maxPagesToShow / 2));
+  const end = Math.min(totalPages.value, start + maxPagesToShow - 1);
+
   for (let i = start; i <= end; i++) {
-    pages.push(i)
+    pages.push(i);
   }
-  return pages
-})
+  return pages;
+});
 </script>
 
 <template>
@@ -94,19 +102,27 @@ const pageNumbers = computed(() => {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div>
-            <div class="text-2xl font-bold text-blue-600">{{ stats.total }}</div>
+            <div class="text-2xl font-bold text-blue-600">
+              {{ stats.total }}
+            </div>
             <div class="text-sm text-gray-600">Total</div>
           </div>
           <div>
-            <div class="text-2xl font-bold text-green-600">{{ stats.done }}</div>
+            <div class="text-2xl font-bold text-green-600">
+              {{ stats.done }}
+            </div>
             <div class="text-sm text-gray-600">Completed</div>
           </div>
           <div>
-            <div class="text-2xl font-bold text-yellow-600">{{ stats.inProcess }}</div>
+            <div class="text-2xl font-bold text-yellow-600">
+              {{ stats.inProcess }}
+            </div>
             <div class="text-sm text-gray-600">In Progress</div>
           </div>
           <div>
-            <div class="text-2xl font-bold text-blue-600">{{ stats.completionRate }}%</div>
+            <div class="text-2xl font-bold text-blue-600">
+              {{ stats.completionRate }}%
+            </div>
             <div class="text-sm text-gray-600">Completion Rate</div>
           </div>
         </div>
@@ -127,9 +143,21 @@ const pageNumbers = computed(() => {
                 class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 @input="handleSearch"
               />
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="h-5 w-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </div>
             </div>
@@ -143,7 +171,9 @@ const pageNumbers = computed(() => {
               @change="applyFilters"
             >
               <option value="">All Types</option>
-              <option v-for="type in types" :key="type" :value="type">{{ type }}</option>
+              <option v-for="type in types" :key="type" :value="type">
+                {{ type }}
+              </option>
             </select>
           </div>
 
@@ -155,7 +185,9 @@ const pageNumbers = computed(() => {
               @change="applyFilters"
             >
               <option value="">All Statuses</option>
-              <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
+              <option v-for="status in statuses" :key="status" :value="status">
+                {{ status }}
+              </option>
             </select>
           </div>
 
@@ -177,7 +209,9 @@ const pageNumbers = computed(() => {
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+        ></div>
       </div>
 
       <!-- Error State -->
@@ -194,9 +228,15 @@ const pageNumbers = computed(() => {
       <!-- Empty State -->
       <div v-else-if="isEmpty" class="text-center py-12">
         <div class="text-gray-400 text-6xl mb-4">📄</div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No assessments found</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">
+          No assessments found
+        </h3>
         <p class="text-gray-600 mb-4">
-          {{ hasActiveFilters ? 'Try adjusting your search filters.' : 'No assessments are available yet.' }}
+          {{
+            hasActiveFilters
+              ? "Try adjusting your search filters."
+              : "No assessments are available yet."
+          }}
         </p>
         <button
           v-if="hasActiveFilters"
@@ -242,25 +282,33 @@ const pageNumbers = computed(() => {
               Next
             </button>
           </div>
-          
-          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+
+          <div
+            class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between"
+          >
             <div>
               <p class="text-sm text-gray-700">
                 Page {{ currentPage }} of {{ totalPages }}
               </p>
             </div>
             <div>
-              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <nav
+                class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+              >
                 <button
                   :disabled="currentPage <= 1"
                   @click="prevPage"
                   class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </button>
-                
+
                 <button
                   v-for="page in pageNumbers"
                   :key="page"
@@ -269,19 +317,23 @@ const pageNumbers = computed(() => {
                     'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
                     page === currentPage
                       ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
                   ]"
                 >
                   {{ page }}
                 </button>
-                
+
                 <button
                   :disabled="currentPage >= totalPages"
                   @click="nextPage"
                   class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd"
+                    />
                   </svg>
                 </button>
               </nav>
@@ -291,4 +343,4 @@ const pageNumbers = computed(() => {
       </div>
     </main>
   </div>
-</template> 
+</template>
