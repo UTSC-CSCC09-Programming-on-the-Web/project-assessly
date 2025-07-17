@@ -4,8 +4,7 @@ export interface Assessment {
 	summary: string;
 	author: string;
 	deadline?: string;
-	publishedAt: string;
-	content: string;
+	description: string;
 	time_limit?: number; // in minutes
 }
 
