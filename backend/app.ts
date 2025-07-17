@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import { sequelize } from './datasource.js';
 import { oauthRouter } from './routers/oauth_router.js';
+import { assessmentsRouter } from './routers/assessments_router.js';
 
 // Validate env variables
 const envVars: string[] = [
@@ -38,6 +39,7 @@ try {
 }
 
 app.use('/api/oauth', oauthRouter);
+app.use('/api/assessments', assessmentsRouter);
 
 app.listen(PORT, (err) => {
 	if (err) console.log(err);

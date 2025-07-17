@@ -1,18 +1,32 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useAssessments } from '@/composables/useAssessments';
+import { computed, onMounted, Ref, ref } from 'vue';
 import AssessmentCard from '@/components/AssessmentCard.vue';
 import router from '@/router';
+import { getRecruitersAssessment } from '@/services/api-service';
+import { Assessment } from '@/types/assessment';
 
-let {
-	assessments,
-	loading,
-	error,
-} = useAssessments();
-
+// const assessments = await getRecruitersAssessment();
+const assessments: Ref<Assessment[]> = ref([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
 const isEmpty = computed(() => {
 	return !loading.value && assessments.value.length === 0;
 });
+
+
+onMounted(async () => {
+	try {
+		loading.value = true;
+		const response = await getRecruitersAssessment();
+		assessments.value = response;
+	} catch (err) {
+		error.value = err.message || 'Failed to load assessments';
+	} finally {
+		loading.value = false;
+	}
+});
+
+
 </script>
 
 <template>
