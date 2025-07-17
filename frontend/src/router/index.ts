@@ -11,36 +11,61 @@ const routes: RouteRecordRaw[] = [
 		},
 	},
 	{
-		path: '/assessments',
-		name: 'Assessments',
-		component: () => import('@/views/AssessmentsView.vue'),
+		path: '/candidate-dashboard',
+		name: 'CandidateDashboard',
+		component: () => import('@/views/candidate-views/CandidateDashboardView.vue'),
 		meta: {
-			title: 'Assessments - Assessly',
+			title: 'Candidate Dashboard - Assessly',
 		},
 	},
 	{
-		path: '/assessments/:slug',
-		name: 'AssessmentDetail',
-		component: () => import('@/views/AssessmentDetailView.vue'),
+		path: '/candidate-dashboard/:id/details',
+		name: 'CandidateAssessmentDetails',
+		component: () => import('@/views/candidate-views/CandidateAssessmentDetailsView.vue'),
 		meta: {
-			title: 'Assessment - Assessly',
+			title: 'Candidate Assessment Details - Assessly',
 		},
 		props: true,
 	},
 	{
-		path: '/live-assistant',
-		name: 'LiveAssistant',
-		component: () => import('@/views/LiveAssistantView.vue'),
+		path: '/recruiter-dashboard',
+		name: 'RecruiterDashboard',
+		component: () => import('@/views/recruiter-views/RecruiterDashboardView.vue'),
 		meta: {
-			title: 'AI Live Assistant - Assessly',
+			title: 'Recruiter Dashboard - Assessly',
+		},
+	},
+	{
+		path: '/recruiter-dashboard/:id/details',
+		name: 'RecruiterAssessmentDetails',
+		component: () => import('@/views/recruiter-views/RecruiterAssessmentDetailsView.vue'),
+		meta: {
+			title: 'Recruiter Assessment Details - Assessly',
+		},
+		props: true,
+	},
+	{
+		path: '/manage-subscription',
+		name: 'ManageSubscription',
+		component: () => import('@/views/subscription-views/ManageSubscriptionView.vue'),
+		meta: {
+			title: 'Manage Subscription - Assessly',
+		},
+	},
+	{
+		path: '/purchase-subscription',
+		name: 'PurchaseSubscription',
+		component: () => import('@/views/subscription-views/PurchaseSubscriptionView.vue'),
+		meta: {
+			title: 'Purchase Subscription - Assessly',
 		},
 	},
 	// Redirect from old paths
 	{
-		path: '/assessment/:slug',
+		path: '/candidate-dashboard/:id/details',
 		redirect: (to) => ({
-			name: 'AssessmentDetail',
-			params: { slug: to.params.slug },
+			name: 'CandidateAssessmentDetails',
+			params: { slug: to.params.id },
 		}),
 	},
 	// Catch all 404
@@ -57,7 +82,7 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
 	history: createWebHistory(),
 	routes,
-	scrollBehavior(_to, _from, savedPosition) {
+	scrollBehavior(to, from, savedPosition) {
 		// Always scroll to top when navigating to a new page
 		if (savedPosition) {
 			return savedPosition;
@@ -69,7 +94,7 @@ const router = createRouter({
 // Navigation guards
 router.beforeEach((to) => {
 	// Update document title
-	document.title = (to.meta?.title as string) || 'Assessly';
+	document.title = (to.meta.title as string) || 'Assessly';
 });
 
 export default router;
