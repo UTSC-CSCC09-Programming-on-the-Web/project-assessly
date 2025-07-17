@@ -1,8 +1,7 @@
 import { Router } from 'express';
 import { isAuthenticated } from '../middleware/auth.js';
-import { AssessmentModel } from '../models/assessment_models.js';
-import { UserModel } from '../models/users_model.js';
-import { TokenModel } from '../models/tokens_model.js';
+import { AssessmentModel } from '../models/assessments_model.js';
+import { AssignmentModel } from '../models/assignments_model.js';
 import { extractTokenFromReq } from '../utils/token-helpers.js';
 
 
@@ -24,7 +23,7 @@ assessmentsRouter.post("/", isAuthenticated, async (req, res) => {
             description,
             time_limit,
             deadline,
-            UserId: token?.userId,
+            UserId: token?.User.id,
         });
         return res.status(201).json(assessment);
     } catch (e) {
@@ -34,8 +33,35 @@ assessmentsRouter.post("/", isAuthenticated, async (req, res) => {
 
 assessmentsRouter.get("/", isAuthenticated, async (req, res) => {
     try {
-        const assessments = await AssessmentModel.findAll();
+        const token = await extractTokenFromReq(req);
+        const assessments = await AssessmentModel.findAll({
+			where: {
+				UserId: token?.User.id,
+			},
+		});
         return res.status(200).json(assessments);
+    } catch (e) {
+        return res.status(400).json({ error: e.message || "An error occurred while fetching assessments." });
+    }
+});
+
+assessmentsRouter.delete("/:id", isAuthenticated, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const assessment = await AssessmentModel.findByPk(id);
+        if (!assessment) {
+            return res
+                .status(404)
+                .json({ error: `Assessment with id=${req.params.id} not found.` });
+        }
+        const token = await extractTokenFromReq(req);
+        if (assessment.UserId !== token?.User.id) {
+            return res.status(403).json({ error: "Forbidden" });
+        }
+        // Delete associated assignments
+        await AssignmentModel.destroy({ where: { AssessmentId: assessment.id } });
+        await assessment.destroy();
+        return res.json(assessment);
     } catch (e) {
         return res.status(400).json({ error: e.message || "An error occurred while fetching assessments." });
     }

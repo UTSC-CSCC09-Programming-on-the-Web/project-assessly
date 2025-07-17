@@ -42,3 +42,8 @@ export async function getRecruitersAssessment(): Promise<[Assessment]> {
 	}).then(handleResponse<[Assessment]>);
 }
 
+export async function deleteAssessment(id: number): Promise<Assessment> {
+	return fetch(`/api/assessments/${id}`, {
+		method: 'DELETE',
+	}).then(handleResponse<Assessment>);
+}
