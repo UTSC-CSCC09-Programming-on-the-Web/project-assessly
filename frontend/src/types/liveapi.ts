@@ -1,11 +1,11 @@
 import type {
-  Content,
-  FunctionCall,
-  GenerationConfig,
-  GenerativeContentBlob,
-  Part,
-  Tool,
-} from "@google/generative-ai";
+	Content,
+	FunctionCall,
+	GenerationConfig,
+	GenerativeContentBlob,
+	Part,
+	Tool,
+} from '@google/generative-ai';
 
 /**
  * Live API Configuration and Types
@@ -13,77 +13,77 @@ import type {
 
 // Configuration types
 export type LiveConfig = {
-  model: string;
-  systemInstruction?: { parts: Part[] };
-  generationConfig?: Partial<LiveGenerationConfig>;
-  tools?: Array<Tool | { googleSearch: {} } | { codeExecution: {} }>;
+	model: string;
+	systemInstruction?: { parts: Part[] };
+	generationConfig?: Partial<LiveGenerationConfig>;
+	tools?: Array<Tool | { googleSearch: {} } | { codeExecution: {} }>;
 };
 
 export type LiveGenerationConfig = GenerationConfig & {
-  responseModalities: "text" | "audio" | "image";
-  speechConfig?: {
-    voiceConfig?: {
-      prebuiltVoiceConfig?: {
-        voiceName: "Puck" | "Charon" | "Kore" | "Fenrir" | "Aoede" | string;
-      };
-    };
-  };
+	responseModalities: 'text' | 'audio' | 'image';
+	speechConfig?: {
+		voiceConfig?: {
+			prebuiltVoiceConfig?: {
+				voiceName: 'Puck' | 'Charon' | 'Kore' | 'Fenrir' | 'Aoede' | string;
+			};
+		};
+	};
 };
 
 // Message types
 export type LiveOutgoingMessage =
-  | SetupMessage
-  | ClientContentMessage
-  | RealtimeInputMessage
-  | ToolResponseMessage;
+	| SetupMessage
+	| ClientContentMessage
+	| RealtimeInputMessage
+	| ToolResponseMessage;
 
 export type SetupMessage = {
-  setup: LiveConfig;
+	setup: LiveConfig;
 };
 
 export type ClientContentMessage = {
-  clientContent: {
-    turns: Content[];
-    turnComplete: boolean;
-  };
+	clientContent: {
+		turns: Content[];
+		turnComplete: boolean;
+	};
 };
 
 export type RealtimeInputMessage = {
-  realtimeInput: {
-    mediaChunks: GenerativeContentBlob[];
-  };
+	realtimeInput: {
+		mediaChunks: GenerativeContentBlob[];
+	};
 };
 
 export type ToolResponseMessage = {
-  toolResponse: {
-    functionResponses: LiveFunctionResponse[];
-  };
+	toolResponse: {
+		functionResponses: LiveFunctionResponse[];
+	};
 };
 
 export type LiveFunctionResponse = {
-  response: object;
-  id: string;
+	response: object;
+	id: string;
 };
 
 // Incoming message types
 export type LiveIncomingMessage =
-  | ToolCallCancellationMessage
-  | ToolCallMessage
-  | ServerContentMessage
-  | SetupCompleteMessage;
+	| ToolCallCancellationMessage
+	| ToolCallMessage
+	| ServerContentMessage
+	| SetupCompleteMessage;
 
 export type SetupCompleteMessage = { setupComplete: {} };
 
 export type ServerContentMessage = {
-  serverContent: ServerContent;
+	serverContent: ServerContent;
 };
 
 export type ServerContent = ModelTurn | TurnComplete | Interrupted;
 
 export type ModelTurn = {
-  modelTurn: {
-    parts: Part[];
-  };
+	modelTurn: {
+		parts: Part[];
+	};
 };
 
 export type TurnComplete = { turnComplete: boolean };
@@ -91,52 +91,52 @@ export type TurnComplete = { turnComplete: boolean };
 export type Interrupted = { interrupted: true };
 
 export type ToolCallCancellationMessage = {
-  toolCallCancellation: {
-    ids: string[];
-  };
+	toolCallCancellation: {
+		ids: string[];
+	};
 };
 
 export type ToolCallMessage = {
-  toolCall: ToolCall;
+	toolCall: ToolCall;
 };
 
 export type LiveFunctionCall = FunctionCall & {
-  id: string;
+	id: string;
 };
 
 export type ToolCall = {
-  functionCalls: LiveFunctionCall[];
+	functionCalls: LiveFunctionCall[];
 };
 
 // Log types
 export type StreamingLog = {
-  date: Date;
-  type: string;
-  count?: number;
-  message: string | LiveOutgoingMessage | LiveIncomingMessage;
+	date: Date;
+	type: string;
+	count?: number;
+	message: string | LiveOutgoingMessage | LiveIncomingMessage;
 };
 
 // Type guards
 export const isSetupCompleteMessage = (a: unknown): a is SetupCompleteMessage =>
-  typeof a === "object" && a !== null && "setupComplete" in a;
+	typeof a === 'object' && a !== null && 'setupComplete' in a;
 
 export const isServerContentMessage = (a: any): a is ServerContentMessage =>
-  typeof a === "object" && a !== null && "serverContent" in a;
+	typeof a === 'object' && a !== null && 'serverContent' in a;
 
 export const isToolCallMessage = (a: any): a is ToolCallMessage =>
-  typeof a === "object" && a !== null && "toolCall" in a;
+	typeof a === 'object' && a !== null && 'toolCall' in a;
 
 export const isModelTurn = (a: any): a is ModelTurn =>
-  typeof a === "object" && a !== null && "modelTurn" in a;
+	typeof a === 'object' && a !== null && 'modelTurn' in a;
 
 export const isTurnComplete = (a: any): a is TurnComplete =>
-  typeof a === "object" && a !== null && "turnComplete" in a;
+	typeof a === 'object' && a !== null && 'turnComplete' in a;
 
 export const isInterrupted = (a: any): a is Interrupted =>
-  typeof a === "object" && a !== null && "interrupted" in a;
+	typeof a === 'object' && a !== null && 'interrupted' in a;
 
 // Connection types
 export type MultimodalLiveAPIClientConnection = {
-  url?: string;
-  apiKey: string;
+	url?: string;
+	apiKey: string;
 };
