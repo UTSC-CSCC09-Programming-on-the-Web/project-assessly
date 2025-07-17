@@ -1,22 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAssessments } from '@/composables/useAssessments';
 import { siteConfig } from '@/data/siteConfig';
-import AssessmentCard from '@/components/AssessmentCard.vue';
-import LiveAssistant from '@/components/LiveAssistant.vue';
-
-const router = useRouter();
-const { assessments, stats } = useAssessments();
-
-// Get latest 3 assessments for preview
-const latestAssessments = computed(() => {
-	return assessments.value.slice(0, 3);
-});
-
-const navigateToAssessments = () => {
-	router.push('/assessments');
-};
+import GoogleSignInButton from '@/components/GoogleSignInButton.vue';
 </script>
 
 <template>
@@ -33,121 +17,9 @@ const navigateToAssessments = () => {
 						{{ siteConfig.description }}
 					</p>
 					<div class="mt-10">
-						<button
-							@click="navigateToAssessments"
-							class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
-						>
-							View All Assessments
-							<svg
-								class="ml-2 w-5 h-5"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M17 8l4 4m0 0l-4 4m4-4H3"
-								/>
-							</svg>
-						</button>
+						<GoogleSignInButton> </GoogleSignInButton>
 					</div>
 				</div>
-			</div>
-		</section>
-
-		<!-- Stats Section -->
-		<section class="bg-blue-50 py-16">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="text-center mb-12">
-					<h2 class="text-3xl font-bold text-gray-900">Assessment Overview</h2>
-					<p class="mt-4 text-lg text-gray-600">Current status of all assessments</p>
-				</div>
-
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-					<div class="bg-white rounded-lg p-6 text-center shadow-sm">
-						<div class="text-3xl font-bold text-blue-600 mb-2">
-							{{ stats.total }}
-						</div>
-						<div class="text-gray-600">Total Assessments</div>
-					</div>
-					<div class="bg-white rounded-lg p-6 text-center shadow-sm">
-						<div class="text-3xl font-bold text-green-600 mb-2">
-							{{ stats.done }}
-						</div>
-						<div class="text-gray-600">Completed</div>
-					</div>
-					<div class="bg-white rounded-lg p-6 text-center shadow-sm">
-						<div class="text-3xl font-bold text-yellow-600 mb-2">
-							{{ stats.inProcess }}
-						</div>
-						<div class="text-gray-600">In Progress</div>
-					</div>
-					<div class="bg-white rounded-lg p-6 text-center shadow-sm">
-						<div class="text-3xl font-bold text-blue-600 mb-2">
-							{{ stats.completionRate }}%
-						</div>
-						<div class="text-gray-600">Completion Rate</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- Latest Assessments Section -->
-		<section class="py-16 bg-white">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="text-center mb-12">
-					<h2 class="text-3xl font-bold text-gray-900">Latest Assessments</h2>
-					<p class="mt-4 text-lg text-gray-600">
-						Recent additions to our assessment collection
-					</p>
-				</div>
-
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-					<AssessmentCard
-						v-for="(assessment, index) in latestAssessments"
-						:key="assessment.slug"
-						:data="assessment"
-						:priority="index < 2"
-					/>
-				</div>
-
-				<div class="text-center">
-					<button
-						@click="navigateToAssessments"
-						class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
-					>
-						View All Assessments
-						<svg
-							class="ml-2 w-5 h-5"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M17 8l4 4m0 0l-4 4m4-4H3"
-							/>
-						</svg>
-					</button>
-				</div>
-			</div>
-		</section>
-
-		<!-- Live Assistant Section -->
-		<section class="py-16 bg-white">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="text-center mb-12">
-					<h2 class="text-3xl font-bold text-gray-900">AI Live Assistant</h2>
-					<p class="mt-4 text-lg text-gray-600">
-						Get instant help with assessments using our AI-powered assistant
-					</p>
-				</div>
-
-				<LiveAssistant />
 			</div>
 		</section>
 
