@@ -43,15 +43,16 @@ oauthRouter.get('/callback', async (req, res) => {
 		sendError(res, 422, 'Code is not passed in query');
 	}
 
-	const { tokens } = await oauth2Client.getToken(code);
-	oauth2Client.setCredentials(tokens);
-
-	const oauth2 = google.oauth2({
-		auth: oauth2Client,
-		version: 'v2',
-	});
-
 	try {
+		const { tokens } = await oauth2Client.getToken(code);
+		oauth2Client.setCredentials(tokens);
+
+		const oauth2 = google.oauth2({
+			auth: oauth2Client,
+			version: 'v2',
+		});
+
+	
 		const userInfoResponse = await oauth2.userinfo.get();
 		const userInfo = userInfoResponse.data;
 		const user = { username: userInfo.name!, email: userInfo.email! };

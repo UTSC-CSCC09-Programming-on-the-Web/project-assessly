@@ -25,7 +25,7 @@ assessmentsRouter.post("/", isAuthenticated, async (req, res) => {
             deadline,
             UserId: token?.User.id,
         });
-        return res.status(201).json(assessment);
+        return res.status(200).json(assessment);
     } catch (e) {
         return res.status(400).json({ error: e.message || "An error occurred while creating the assessment." });
     }
@@ -45,6 +45,25 @@ assessmentsRouter.get("/", isAuthenticated, async (req, res) => {
     }
 });
 
+assessmentsRouter.get("/:id", isAuthenticated, async (req, res) => {
+    try {
+        const token = await extractTokenFromReq(req);
+        const assessment = await AssessmentModel.findOne({
+            where: {
+                id: req.params.id,
+                UserId: token?.User.id,
+            },
+        });
+        if (!assessment) {
+            return res.status(404).json({ error: "Assessment not found." });
+        }
+        return res.status(200).json(assessment);
+    } catch (e) {
+        return res.status(400).json({ error: e.message || "An error occurred while fetching the assessment." });
+    }
+});
+
+
 assessmentsRouter.delete("/:id", isAuthenticated, async (req, res) => {
     try {
         const { id } = req.params;
@@ -58,7 +77,7 @@ assessmentsRouter.delete("/:id", isAuthenticated, async (req, res) => {
         if (assessment.UserId !== token?.User.id) {
             return res.status(403).json({ error: "Forbidden" });
         }
-        // Delete associated assignments
+
         await AssignmentModel.destroy({ where: { AssessmentId: assessment.id } });
         await assessment.destroy();
         return res.json(assessment);
