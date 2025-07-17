@@ -1,12 +1,48 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { siteConfig } from '@/data/siteConfig';
 import HeaderComponent from './components/HeaderComponent.vue';
+import { getMe } from './services/api-service';
+
+const isSignedIn = ref(false);
+const isSubscribed = ref(true);
+const router = useRouter();
+
+const isHeaderReady = ref(false);
+
+function handleSignout() {
+	isSignedIn.value = false;
+	router.push('/');
+}
+
+onMounted(async () => {
+	await getMe()
+		.then(() => {
+			isSignedIn.value = true;
+			isHeaderReady.value = true;
+			router.push('candidate-dashboard');
+		})
+		.catch((er) => {
+			isSignedIn.value = false;
+			isHeaderReady.value = true;
+			router.push('/');
+			if (er.status !== 401) {
+				alert(er.message);
+			}
+		});
+});
 </script>
 
 <template>
 	<div id="app" class="min-h-screen bg-gray-50">
 		<!-- Navigation -->
-		<HeaderComponent></HeaderComponent>
+		<HeaderComponent
+			:is-signed-in="isSignedIn"
+			:is-subscribed="isSubscribed"
+			@signout="handleSignout"
+			v-if="isHeaderReady"
+		></HeaderComponent>
 		<!-- Main Content -->
 		<main class="flex-1">
 			<router-view />

@@ -1,24 +1,30 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { siteConfig } from '@/data/siteConfig';
 import GoogleSignInButton from './GoogleSignInButton.vue';
+import { signOut } from '@/services/api-service';
+
+const props = defineProps<{
+	isSignedIn: boolean;
+	isSubscribed: boolean;
+}>();
+const emit = defineEmits(['signout']);
 
 const route = useRoute();
 const router = useRouter();
 
-const isSignedIn = ref(false);
-const isSubscribed = ref(true);
+async function onSignoutClick() {
+	await signOut()
+		.then(() => emit('signout'))
+		.catch((er) => alert(er.message));
+}
+
+const getIsSignedIn = computed(() => props.isSignedIn);
+
+const getIsSubscribed = computed(() => props.isSubscribed);
+
 const routeName = computed(() => route.name);
-
-const navigateHome = () => {
-	isSignedIn.value = false;
-	router.push('/');
-};
-
-const signIn = () => {
-	isSignedIn.value = true;
-};
 </script>
 
 <template>
@@ -37,7 +43,7 @@ const signIn = () => {
 				<!-- Navigation Links -->
 				<div class="hidden md:block">
 					<div class="ml-10 flex items-baseline space-x-4">
-						<div v-if="isSignedIn">
+						<div v-if="getIsSignedIn">
 							<router-link
 								to="/recruiter-dashboard"
 								class="px-3 py-2 rounded-md text-sm font-medium transition-colors"
@@ -46,7 +52,7 @@ const signIn = () => {
 										? 'bg-blue-100 text-blue-700'
 										: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
 								"
-								v-if="isSubscribed"
+								v-if="getIsSubscribed"
 							>
 								Recruiter Dashboard
 							</router-link>
@@ -69,7 +75,7 @@ const signIn = () => {
 										? 'bg-blue-100 text-blue-700'
 										: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
 								"
-								v-if="isSubscribed"
+								v-if="getIsSubscribed"
 							>
 								Manage Subscription
 							</router-link>
@@ -89,12 +95,12 @@ const signIn = () => {
 
 						<button
 							class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
-							@click="navigateHome"
-							v-if="isSignedIn"
+							@click="onSignoutClick"
+							v-if="getIsSignedIn"
 						>
 							Sign out
 						</button>
-						<GoogleSignInButton @click="signIn" v-else> </GoogleSignInButton>
+						<GoogleSignInButton v-else> </GoogleSignInButton>
 					</div>
 				</div>
 
