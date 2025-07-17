@@ -1,0 +1,10 @@
+import { TokenModel } from '../models/tokens_model.js';
+
+export async function extractTokenFromReq(req) {
+	const token = req.cookies?.assesslyAccessToken;
+	if (!token) {
+		return null;
+	}
+	return await TokenModel.findOne({ where: { access_token: token } });
+	
+}
