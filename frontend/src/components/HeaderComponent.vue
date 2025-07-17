@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { siteConfig } from '@/data/siteConfig';
+import GoogleSignInButton from './GoogleSignInButton.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -17,7 +18,6 @@ const navigateHome = () => {
 
 const signIn = () => {
 	isSignedIn.value = true;
-	router.push('/candidate-dashboard');
 };
 </script>
 
@@ -94,13 +94,7 @@ const signIn = () => {
 						>
 							Sign out
 						</button>
-						<button
-							class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
-							@click="signIn"
-							v-else
-						>
-							Sign in with Google
-						</button>
+						<GoogleSignInButton @click="signIn" v-else> </GoogleSignInButton>
 					</div>
 				</div>
 
