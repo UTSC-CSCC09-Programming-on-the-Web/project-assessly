@@ -46,8 +46,8 @@
 
 - **AI-Based Assessment Metrics (Phase 1)**  
   The AI agent scores candidates on:
-  - Task completion time
-  - External tool usage (e.g., Stack Overflow, LLM prompts, Docs)
+    - Task completion time
+    - External tool usage (e.g., Stack Overflow, LLM prompts, Docs)
 
 - **Assessment Analytics Dashboard**  
   Recruiters can view completed assessments and metric-based scores for each candidate.
@@ -56,8 +56,8 @@
 
 - **Expanded Assessment Metrics**  
   Additional evaluation criteria:
-  - Code correctness
-  - Communication clarity
+    - Code correctness
+    - Communication clarity
 
 - **UI Enhancements**  
   Final refinements to the platform interface.
