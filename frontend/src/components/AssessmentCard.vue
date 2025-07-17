@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import type { Assessment } from '@/types/assessment';
+import { deleteAssessment } from '@/services/api-service';
+
+const emit = defineEmits(['delete']);
 
 interface Props {
 	data: Assessment;
@@ -21,6 +24,17 @@ const handleClick = () => {
 	} else {
 		router.push(`/candidate-dashboard/${props.data.id}/details`);
 	}
+};
+
+const handleDelete = async () => {
+	await deleteAssessment(props.data.id)
+		.then(() => {
+			emit('delete');
+		})
+		.catch((err) => {
+			console.error('Failed to delete assessment:', err);
+			alert('Failed to delete assessment. Please try again later.');
+		});
 };
 
 const prettifyDate = (date: string | null): string => {
@@ -45,6 +59,7 @@ const prettifyDate = (date: string | null): string => {
 					<div v-if="role === 'recruiter'" class="flex gap-2">
 						<button
 							class="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 transition"
+							@click.stop="handleDelete"
 						>
 							<img src="@/media/bin.png" alt="Delete" class="w-4 h-4" />
 						</button>

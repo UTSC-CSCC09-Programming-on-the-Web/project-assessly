@@ -5,7 +5,6 @@ import router from '@/router';
 import { getRecruitersAssessment } from '@/services/api-service';
 import { Assessment } from '@/types/assessment';
 
-// const assessments = await getRecruitersAssessment();
 const assessments: Ref<Assessment[]> = ref([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
@@ -14,7 +13,7 @@ const isEmpty = computed(() => {
 });
 
 
-onMounted(async () => {
+const fetchAssessments = async () => {
 	try {
 		loading.value = true;
 		const response = await getRecruitersAssessment();
@@ -24,9 +23,9 @@ onMounted(async () => {
 	} finally {
 		loading.value = false;
 	}
-});
+};
 
-
+onMounted(fetchAssessments);
 </script>
 
 <template>
@@ -84,6 +83,7 @@ onMounted(async () => {
 						:key="assessment.id"
 						:data="assessment"
 						:role="'recruiter'"
+						@delete="fetchAssessments"
 					/>
 				</div>
 			</div>
