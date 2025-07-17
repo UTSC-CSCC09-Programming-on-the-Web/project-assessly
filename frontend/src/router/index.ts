@@ -54,6 +54,21 @@ const routes: RouteRecordRaw[] = [
 		props: true,
 	},
 	{
+		path: '/candidate-dashboard/:id/details',
+		name: 'CandidateAssessmentDetails',
+		component: () => import('@/views/candidate-views/CandidateAssessmentDetailsView.vue'),
+		meta: {
+			title: 'Candidate Assessment Details - Assessly',
+		},
+		props: true,
+	},
+	{
+		path: '/candidate-assessment/:id',
+		name: 'CandidateAssessment',
+		component: () => import('@/views/LiveAssistantView.vue'),
+		props: true,
+	},
+	{
 		path: '/manage-subscription',
 		name: 'ManageSubscription',
 		component: () => import('@/views/subscription-views/ManageSubscriptionView.vue'),

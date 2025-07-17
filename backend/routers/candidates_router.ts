@@ -40,3 +40,25 @@ candidatesRouter.get("/assessments", isAuthenticated, async (req, res) => {
         return res.status(400).json({ error: e.message || "An error occurred while fetching assessments." });
     }
 });
+
+candidatesRouter.get("/assessments/:id", isAuthenticated, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const token = await extractTokenFromReq(req);
+        const email = token?.User.email;
+
+        const assessment = await AssessmentModel.findOne({
+            where: { id },
+            include: [{
+                model: AssignmentModel,
+                where: { email }
+            }],
+        });
+        if (!assessment || assessment.Assignments.length === 0) {
+            return res.status(404).json({ error: "Assessment not found." });
+        }
+        return res.status(200).json(assessment);
+    } catch (e) {
+        return res.status(400).json({ error: e.message || "An error occurred while creating the assignment." });
+    }
+});
