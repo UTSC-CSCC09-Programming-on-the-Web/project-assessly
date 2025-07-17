@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAssessment } from '@/composables/useAssessments';
 import MarkdownIt from 'markdown-it';
 import { Assessment } from '@/types/assessment';
 import { createAssignment, getRecruitersAssessmentDetails } from '@/services/api-service';
