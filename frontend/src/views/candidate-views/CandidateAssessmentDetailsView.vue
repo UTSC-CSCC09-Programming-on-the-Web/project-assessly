@@ -3,10 +3,11 @@ import { computed, onMounted, ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import MarkdownIt from 'markdown-it';
 import { Assessment } from '@/types/assessment';
-import { getCandidatesAssessmentDetails, getRecruitersAssessmentDetails } from '@/services/api-service';
+import { getCandidatesAssessmentDetails } from '@/services/api-service';
 
 interface Props {
 	id: string;
+	completingAssessment?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -113,7 +114,7 @@ onMounted(async () => {
 		<!-- Assessment Content -->
 		<div v-else-if="assessment" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 			<!-- Navigation -->
-			<nav class="mb-8">
+			<nav class="mb-8" v-if="!completingAssessment">
 				<button
 					@click="goBack"
 					class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors"
@@ -151,7 +152,8 @@ onMounted(async () => {
 					<button
 						@click="handleStartAssessment"
 						class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-					>
+						v-if="!completingAssessment"
+						>
 						Start Assessment
 					</button>
 				</div>
