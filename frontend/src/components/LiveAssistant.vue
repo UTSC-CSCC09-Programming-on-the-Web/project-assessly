@@ -23,17 +23,7 @@
 
 		<!-- API Key Input -->
 		<div v-if="!connected && !connecting" class="mb-6">
-			<label for="apiKey" class="block text-sm font-medium text-gray-700 mb-2">
-				Google AI API Key
-			</label>
 			<div class="flex space-x-2">
-				<input
-					v-model="apiKey"
-					type="password"
-					id="apiKey"
-					placeholder="Enter your API key..."
-					class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-				/>
 				<button
 					@click="handleConnect"
 					:disabled="!apiKey.trim() || connecting"
@@ -42,15 +32,7 @@
 					Connect
 				</button>
 			</div>
-			<p class="text-xs text-gray-500 mt-1">
-				Get your API key from
-				<a
-					href="https://ai.google.dev"
-					target="_blank"
-					class="text-blue-600 hover:underline"
-					>Google AI Studio</a
-				>
-			</p>
+
 		</div>
 
 		<!-- Main Interface -->
@@ -143,59 +125,6 @@
 					Disconnect
 				</button>
 			</div>
-
-			<!-- Text Input -->
-			<div class="space-y-2">
-				<label class="block text-sm font-medium text-gray-700"> Send Text Message </label>
-				<div class="flex space-x-2">
-					<input
-						v-model="textMessage"
-						@keyup.enter="sendTextMessage"
-						type="text"
-						placeholder="Type a message..."
-						class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-					/>
-					<button
-						@click="sendTextMessage"
-						:disabled="!textMessage.trim()"
-						class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
-					>
-						Send
-					</button>
-				</div>
-			</div>
-
-			<!-- Logs -->
-			<div class="space-y-2">
-				<div class="flex items-center justify-between">
-					<h3 class="text-lg font-medium text-gray-900">Activity Log</h3>
-					<button @click="clearLogs" class="text-sm text-gray-500 hover:text-gray-700">
-						Clear
-					</button>
-				</div>
-				<div
-					class="bg-black text-green-400 p-4 rounded-md h-64 overflow-y-auto font-mono text-sm"
-				>
-					<div v-if="logs.length === 0" class="text-gray-500">No activity yet...</div>
-					<div v-for="log in logs" :key="log.date.getTime()" class="mb-1">
-						<span class="text-gray-400">{{ formatTime(log.date) }}</span>
-						<span class="ml-2" :class="getLogColor(log.type)">{{ log.type }}</span>
-						<span class="ml-2">{{ formatLogMessage(log.message) }}</span>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Instructions -->
-		<div v-if="!connected && !connecting" class="mt-6 p-4 bg-blue-50 rounded-lg">
-			<h3 class="font-medium text-blue-900 mb-2">How to use:</h3>
-			<ul class="text-sm text-blue-800 space-y-1">
-				<li>1. Enter your Google AI API key above</li>
-				<li>2. Click "Connect" to establish connection</li>
-				<li>3. Use the microphone button to start voice conversations</li>
-				<li>4. Or type text messages to chat with the AI</li>
-				<li>5. The AI can help you with assessments and answer questions</li>
-			</ul>
 		</div>
 	</div>
 </template>
