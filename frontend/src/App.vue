@@ -16,22 +16,22 @@ function handleSignout() {
 	router.push('/');
 }
 
-// onMounted(async () => {
-// 	await getMe()
-// 		.then(() => {
-// 			isSignedIn.value = true;
-// 			isHeaderReady.value = true;
-// 			router.push('candidate-dashboard');
-// 		})
-// 		.catch((er) => {
-// 			isSignedIn.value = false;
-// 			isHeaderReady.value = true;
-// 			router.push('/');
-// 			if (er.status !== 401) {
-// 				alert(er.message);
-// 			}
-// 		});
-// });
+onMounted(async () => {
+	await getMe()
+		.then(() => {
+			isSignedIn.value = true;
+			isHeaderReady.value = true;
+			router.push('candidate-dashboard');
+		})
+		.catch((er) => {
+			isSignedIn.value = false;
+			isHeaderReady.value = true;
+			router.push('/');
+			if (er.status !== 401) {
+				alert(er.message);
+			}
+		});
+});
 </script>
 
 <template>
