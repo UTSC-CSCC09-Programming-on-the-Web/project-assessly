@@ -26,7 +26,6 @@
 			<div class="flex space-x-2">
 				<button
 					@click="handleConnect"
-					:disabled="!apiKey.trim() || connecting"
 					class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					Connect
@@ -166,15 +165,11 @@ onMounted(() => {
 
 // Methods
 const handleConnect = async () => {
-	if (!apiKey.value.trim()) return;
-
-	// Save API key
-	localStorage.setItem('google_ai_api_key', apiKey.value);
-
 	try {
+		const apiKeyFromEnv = import.meta.env.VITE_GOOGLE_AI_API_KEY;
 		// Initialize Live API
 		liveAPIInstance = useLiveAPI({
-			apiKey: apiKey.value,
+			apiKey: apiKeyFromEnv,
 			defaultConfig: getAssessmentConfig(),
 		});
 
