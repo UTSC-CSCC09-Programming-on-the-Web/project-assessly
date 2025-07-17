@@ -42,8 +42,31 @@ export async function getRecruitersAssessment(): Promise<[Assessment]> {
 	}).then(handleResponse<[Assessment]>);
 }
 
+export async function getRecruitersAssessmentDetails(id: string): Promise<Assessment> {
+	return fetch(`/api/assessments/${id}`, {
+		method: 'GET',
+	}).then(handleResponse<Assessment>);
+}
+
 export async function deleteAssessment(id: number): Promise<Assessment> {
 	return fetch(`/api/assessments/${id}`, {
 		method: 'DELETE',
 	}).then(handleResponse<Assessment>);
+}
+
+
+export async function createAssignment(id: string, email: string) {
+	return fetch(`/api/assignments/${id}`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ email }),
+	}).then(handleResponse);
+}
+
+export async function getCandidatesAssessments(): Promise<{ assessments: Assessment[], totalCount: number, completedCount: number }> {
+	return fetch('/api/candidates/assessments', {
+		method: 'GET',
+	}).then(handleResponse<{ assessments: Assessment[], totalCount: number, completedCount: number }>);
 }

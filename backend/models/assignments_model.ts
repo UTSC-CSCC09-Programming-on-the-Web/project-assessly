@@ -16,6 +16,13 @@ export const AssignmentModel = sequelize.define('Assignment', {
         type: DataTypes.FLOAT,
         allowNull: true,
     },
+}, {
+  indexes: [
+    {
+      unique: true,
+      fields: ['email', 'AssessmentId'],
+    },
+  ],
 });
 
 AssignmentModel.belongsTo(AssessmentModel);
