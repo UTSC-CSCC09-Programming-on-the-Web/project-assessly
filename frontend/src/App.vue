@@ -5,33 +5,33 @@ import { siteConfig } from '@/data/siteConfig';
 import HeaderComponent from './components/HeaderComponent.vue';
 import { getMe } from './services/api-service';
 
-const isSignedIn = ref(false);
+const isSignedIn = ref(true);
 const isSubscribed = ref(true);
 const router = useRouter();
 
-const isHeaderReady = ref(false);
+const isHeaderReady = ref(true);
 
 function handleSignout() {
 	isSignedIn.value = false;
 	router.push('/');
 }
 
-onMounted(async () => {
-	await getMe()
-		.then(() => {
-			isSignedIn.value = true;
-			isHeaderReady.value = true;
-			router.push('candidate-dashboard');
-		})
-		.catch((er) => {
-			isSignedIn.value = false;
-			isHeaderReady.value = true;
-			router.push('/');
-			if (er.status !== 401) {
-				alert(er.message);
-			}
-		});
-});
+// onMounted(async () => {
+// 	await getMe()
+// 		.then(() => {
+// 			isSignedIn.value = true;
+// 			isHeaderReady.value = true;
+// 			router.push('candidate-dashboard');
+// 		})
+// 		.catch((er) => {
+// 			isSignedIn.value = false;
+// 			isHeaderReady.value = true;
+// 			router.push('/');
+// 			if (er.status !== 401) {
+// 				alert(er.message);
+// 			}
+// 		});
+// });
 </script>
 
 <template>

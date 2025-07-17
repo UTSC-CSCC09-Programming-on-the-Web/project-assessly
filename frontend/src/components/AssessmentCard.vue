@@ -1,135 +1,107 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import type { Assessment } from '@/types/assessment';
-import { formatDate } from '@/utils/assessments';
 
 interface Props {
 	data: Assessment;
-	priority?: boolean;
+	role: 'recruiter' | 'candidate';
+	status?: string;
+	sent_to?: number;
+	completed_by?: number;
+	score?: number;
+	time_taken?: number;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-	priority: false,
-});
-
+const props = defineProps<Props>();
 const router = useRouter();
 
-const statusColor = computed(() => {
-	switch (props.data.status) {
-		case 'Done':
-			return 'bg-green-100 text-green-800';
-		case 'In Process':
-			return 'bg-yellow-100 text-yellow-800';
-		case 'Pending':
-			return 'bg-gray-100 text-gray-800';
-		default:
-			return 'bg-blue-100 text-blue-800';
-	}
-});
-
-const typeColor = computed(() => {
-	switch (props.data.type) {
-		case 'Technical content':
-			return 'bg-purple-100 text-purple-800';
-		case 'Narrative':
-			return 'bg-blue-100 text-blue-800';
-		case 'Legal':
-			return 'bg-red-100 text-red-800';
-		case 'Research':
-			return 'bg-indigo-100 text-indigo-800';
-		case 'Visual':
-			return 'bg-pink-100 text-pink-800';
-		case 'Financial':
-			return 'bg-emerald-100 text-emerald-800';
-		default:
-			return 'bg-gray-100 text-gray-800';
-	}
-});
-
 const handleClick = () => {
-	router.push(`/assessments/${props.data.slug}`);
+	if (props.role === 'recruiter') {
+		router.push(`/recruiter-dashboard/${props.data.id}/details`);
+	} else {
+		router.push(`/candidate-dashboard/${props.data.id}/details`);
+	}
 };
 </script>
 
 <template>
 	<div class="block cursor-pointer group" @click="handleClick">
 		<div
-			class="bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:shadow-md overflow-hidden"
+			class="h-full bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200 hover:shadow-md overflow-hidden flex flex-col"
 		>
-			<!-- Image -->
-			<div v-if="data.image" class="aspect-video w-full overflow-hidden">
-				<img
-					:src="data.image"
-					:alt="data.title"
-					:loading="priority ? 'eager' : 'lazy'"
-					class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-				/>
-			</div>
-			<div
-				v-else
-				class="aspect-video w-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"
-			>
-				<div class="text-gray-400 text-4xl">📄</div>
-			</div>
-
-			<!-- Content -->
 			<div class="p-6">
-				<!-- Meta information -->
+				<!-- Header -->
 				<div class="flex items-center justify-between mb-3">
-					<time :datetime="data.publishedAt" class="text-sm text-gray-500">
-						{{ formatDate(data.publishedAt) }}
-					</time>
-					<div class="flex gap-2">
-						<span
-							v-if="data.status"
-							:class="statusColor"
-							class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+					<h3 class="text-xl font-semibold mb-2 text-gray-900 group-hover:text-blue-600 transition-colors">
+						{{ data.title }}
+					</h3>
+					<!-- Right side of header -->
+					<div v-if="role === 'recruiter'" class="flex gap-2">
+						<button
+							class="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 transition"
 						>
-							{{ data.status }}
-						</span>
+							<img src="@/media/bin.png" alt="Delete" class="w-4 h-4" />
+						</button>
+					</div>
+					<div v-else class="flex gap-2">
 						<span
-							v-if="data.type"
-							:class="typeColor"
-							class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+							class="px-3 py-1 rounded-full text-xs font-semibold"
+							:class="{
+								'bg-green-100 text-green-800': status === 'Done',
+								'bg-yellow-100 text-yellow-800': status === 'In Progress',
+								'bg-red-100 text-red-800': status === 'Not Completed',
+							}"
 						>
-							{{ data.type }}
+							{{ status }}
 						</span>
 					</div>
 				</div>
 
-				<!-- Title and Summary -->
-				<h3
-					class="text-xl font-semibold mb-2 text-gray-900 group-hover:text-blue-600 transition-colors"
-				>
-					{{ data.title }}
-				</h3>
-				<p class="text-gray-600 mb-4 line-clamp-3">
+				<!-- Summary -->
+				<p class="text-gray-600 mb-4 line-clamp-5 min-h-[7.5rem]">
 					{{ data.summary }}
 				</p>
+
+				<!-- Stats area -->
+				<div class="flex justify-between items-start mb-4 text-sm text-gray-700">
+					<template v-if="role === 'recruiter'">
+						<!-- Recruiter view -->
+						<div class="flex flex-col items-center text-center">
+							<span class="text-xs text-gray-500">Sent to</span>
+							<span class="text-2xl font-bold text-gray-900">{{ sent_to != null ? sent_to : 'N/A' }}</span>
+						</div>
+						<div class="flex flex-col items-center text-center">
+							<span class="text-xs text-gray-500">Completed by</span>
+							<span class="text-2xl font-bold text-gray-900">{{ completed_by != null ? completed_by : 'N/A' }}</span>
+						</div>
+					</template>
+					<template v-else>
+						<!-- Candidate view -->
+						<div class="flex flex-col items-center text-center">
+							<span class="text-xs text-gray-500">Your Score</span>
+							<span class="text-2xl font-bold text-gray-900">
+								{{ score != null ? score : 'N/A' }}
+							</span>
+						</div>
+						<div class="flex flex-col items-center text-center">
+							<span class="text-xs text-gray-500">Time Taken</span>
+							<span class="text-2xl font-bold text-gray-900">
+							{{ time_taken != null ? time_taken : 'N/A' }}
+							</span>
+						</div>
+					</template>
+				</div>
 
 				<!-- Footer -->
 				<div class="flex items-center justify-between text-sm text-gray-500">
 					<div class="flex items-center">
-						<span class="font-medium">{{ data.author }}</span>
-						<span v-if="data.reviewer" class="ml-2">
-							• Reviewed by {{ data.reviewer }}
-						</span>
+						<span class="font-medium">From {{ data.author }}</span>
 					</div>
-					<div v-if="data.target && data.limit" class="text-xs">
-						Target: {{ data.target }} | Limit: {{ data.limit }}
+					<div v-if="data.deadline" class="flex items-center">
+						<span class="font-medium">Deadline: {{ data.deadline }}</span>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </template>
-
-<style scoped>
-.line-clamp-3 {
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-</style>
