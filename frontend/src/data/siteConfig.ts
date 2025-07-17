@@ -1,4 +1,8 @@
-import type { SiteConfig } from '@/types/assessment';
+export interface SiteConfig {
+	name: string;
+	url: string;
+	description: string;
+}
 
 export const siteConfig: SiteConfig = {
 	name: 'Assessly',
