@@ -70,3 +70,9 @@ export async function getCandidatesAssessments(): Promise<{ assessments: Assessm
 		method: 'GET',
 	}).then(handleResponse<{ assessments: Assessment[], totalCount: number, completedCount: number }>);
 }
+
+export async function getCandidatesAssessmentDetails(id: string): Promise<Assessment> {
+	return fetch(`/api/candidates/assessments/${id}`, {
+		method: 'GET',
+	}).then(handleResponse<Assessment>);
+}
