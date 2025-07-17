@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAssessment } from '@/composables/useAssessments';
-import { formatDate } from '@/utils/assessments';
-import AssessmentAuthor from '@/components/AssessmentAuthor.vue';
 import MarkdownIt from 'markdown-it';
+import { Assessment } from '@/types/assessment';
+import { createAssignment, getRecruitersAssessmentDetails } from '@/services/api-service';
 
 interface Props {
-	slug: string;
+	id: string;
 }
 
 const props = defineProps<Props>();
 const router = useRouter();
 
-const { assessment, loading, error } = useAssessment(props.slug);
+const assessment: Ref<Assessment | undefined> = ref(undefined);
+const loading = ref(true);
+const error = ref<string | null>(null);
 
 // Markdown parser setup
 const md = new MarkdownIt({
@@ -23,8 +25,8 @@ const md = new MarkdownIt({
 });
 
 const renderedContent = computed(() => {
-	if (!assessment.value?.content) return '';
-	return md.render(assessment.value.content);
+	if (!assessment.value?.description) return '';
+	return md.render(assessment.value.description);
 });
 
 const statusColor = computed(() => {
@@ -33,49 +35,73 @@ const statusColor = computed(() => {
 	switch (assessment.value.status) {
 		case 'Done':
 			return 'bg-green-100 text-green-800';
-		case 'In Process':
+		case 'In Progress':
 			return 'bg-yellow-100 text-yellow-800';
-		case 'Pending':
-			return 'bg-gray-100 text-gray-800';
 		default:
 			return 'bg-blue-100 text-blue-800';
 	}
 });
 
-const typeColor = computed(() => {
-	if (!assessment.value?.type) return 'bg-gray-100 text-gray-800';
+const formatDate = (date?: string | null) => {
+	if (!date) return 'N/A';
+	const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+	return new Date(date).toLocaleDateString(undefined, options);
+};
 
-	switch (assessment.value.type) {
-		case 'Technical content':
-			return 'bg-purple-100 text-purple-800';
-		case 'Narrative':
-			return 'bg-blue-100 text-blue-800';
-		case 'Legal':
-			return 'bg-red-100 text-red-800';
-		case 'Research':
-			return 'bg-indigo-100 text-indigo-800';
-		case 'Visual':
-			return 'bg-pink-100 text-pink-800';
-		case 'Financial':
-			return 'bg-emerald-100 text-emerald-800';
-		default:
-			return 'bg-gray-100 text-gray-800';
-	}
-});
+const formatDuration = (minutes?: number | null) => {
+	if (!minutes) return 'N/A';
+	const h = Math.floor(minutes / 60);
+	const m = minutes % 60;
+	return h ? `${h}h ${m}m` : `${m} minutes`;
+};
 
 const goBack = () => {
-	router.push('/assessments');
+	router.push('/recruiter-dashboard');
 };
 
-const goToAssessments = () => {
-	router.push('/assessments');
+const showModal = ref(false);
+const email = ref('');
+const sending = ref(false);
+const sendError = ref<string | null>(null);
+
+const handleSendToCandidates = () => {
+	showModal.value = true;
 };
 
-// Update page title when assessment loads
-onMounted(() => {
-	if (assessment.value) {
-		document.title = `${assessment.value.title} - Assessly`;
+const closeModal = () => {
+	showModal.value = false;
+	email.value = '';
+	sendError.value = null;
+};
+
+const handleSend = async () => {
+	sending.value = true;
+	sendError.value = null;
+
+	try {
+		const res = await createAssignment(props.id, email.value);
+		if (!res) throw new Error();
+		alert('Assessment sent successfully!');
+		closeModal();
+	} catch (err: any) {
+		sendError.value = err.message || 'Failed to send assessment.';
+	} finally {
+		sending.value = false;
 	}
+};
+
+
+onMounted(async () => {
+	await getRecruitersAssessmentDetails(props.id)
+		.then((data) => {
+			assessment.value = data;
+		})
+		.catch((err) => {
+			error.value = err.message || 'Failed to load assessment details';
+		})
+		.finally(() => {
+			loading.value = false;
+		});
 });
 </script>
 
@@ -92,7 +118,7 @@ onMounted(() => {
 			<h1 class="text-2xl font-bold text-gray-900 mb-4">Assessment Not Found</h1>
 			<p class="text-gray-600 mb-8">{{ error }}</p>
 			<button
-				@click="goToAssessments"
+				@click="goBack"
 				class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors"
 			>
 				<svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,137 +153,80 @@ onMounted(() => {
 				</button>
 			</nav>
 
-			<!-- Header Image -->
-			<div v-if="assessment.image" class="mb-8">
-				<img
-					:src="assessment.image"
-					:alt="assessment.title"
-					class="w-full h-auto rounded-lg border shadow-md"
-				/>
-			</div>
-
-			<!-- Title and Meta -->
-			<header class="mb-8">
-				<div class="flex flex-wrap gap-2 mb-4">
-					<span
-						v-if="assessment.status"
-						:class="statusColor"
-						class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-					>
-						{{ assessment.status }}
-					</span>
-					<span
-						v-if="assessment.type"
-						:class="typeColor"
-						class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-					>
-						{{ assessment.type }}
-					</span>
-				</div>
-
-				<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-					{{ assessment.title }}
-				</h1>
-
-				<div
-					class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 mb-6"
-				>
-					<div class="flex items-center space-x-4 mb-4 sm:mb-0">
-						<time :datetime="assessment.publishedAt">
-							{{ formatDate(assessment.publishedAt) }}
-						</time>
-						<span v-if="assessment.reviewer" class="border-l pl-4">
-							Reviewed by {{ assessment.reviewer }}
+			<header class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+				<div>
+					<div class="flex flex-wrap gap-2 mb-2">
+						<span
+							v-if="assessment.status"
+							:class="statusColor"
+							class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+						>
+							{{ assessment.status }}
 						</span>
 					</div>
-					<div
-						v-if="assessment.target && assessment.limit"
-						class="text-xs bg-gray-100 px-3 py-1 rounded"
-					>
-						Target: {{ assessment.target }} | Limit: {{ assessment.limit }}
-					</div>
+
+					<h1 class="text-3xl md:text-4xl font-bold text-gray-900">
+						{{ assessment.title }}
+					</h1>
 				</div>
 
-				<!-- Author -->
-				<div class="mb-8">
-					<AssessmentAuthor
-						:name="assessment.author"
-						:image="'/author.jpg'"
-						:twitter-username="assessment.author"
-					/>
+				<div>
+					<button
+						@click="handleSendToCandidates"
+						class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+					>
+						Send to Candidates
+					</button>
 				</div>
 			</header>
+
+			<section class="mb-8 text-sm text-gray-700">
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div>
+						<span class="font-semibold text-gray-900">Deadline: </span>
+						<span>{{ formatDate(assessment.deadline) }}</span>
+					</div>
+					<div>
+						<span class="font-semibold text-gray-900">Time Limit: </span>
+						<span>{{ formatDuration(assessment.time_limit) }}</span>
+					</div>
+				</div>
+			</section>
 
 			<!-- Content -->
 			<article class="prose prose-lg max-w-none mb-12">
 				<div v-html="renderedContent" class="markdown-content"></div>
 			</article>
+		</div>
+	</div>
 
-			<!-- Footer Actions -->
-			<footer class="border-t pt-8">
-				<div
-					class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-				>
+
+	<div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+		<div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+			<h2 class="text-lg font-semibold mb-4">Send Assessment</h2>
+			<form @submit.prevent="handleSend">
+				<label for="email" class="block text-sm font-medium text-gray-700">Candidate Email</label>
+				<input
+					v-model="email"
+					type="email"
+					id="email"
+					required
+					class="mt-1 mb-2 w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
+				/>
+
+				<p v-if="sendError" class="text-red-600 text-sm mb-2">{{ sendError }}</p>
+
+				<div class="flex justify-end gap-2">
+					<button type="button" @click="closeModal" class="text-gray-600 hover:underline">Cancel</button>
 					<button
-						@click="goBack"
-						class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+						type="submit"
+						class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
+						:disabled="sending"
 					>
-						<svg
-							class="mr-2 w-4 h-4"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M15 19l-7-7 7-7"
-							/>
-						</svg>
-						Back to Assessments
+						{{ sending ? 'Sending...' : 'Send' }}
 					</button>
-
-					<div class="flex space-x-2">
-						<button
-							class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-							title="Share assessment"
-						>
-							<svg
-								class="w-4 h-4"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
-								/>
-							</svg>
-						</button>
-						<button
-							class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-							title="Print assessment"
-						>
-							<svg
-								class="w-4 h-4"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
-								/>
-							</svg>
-						</button>
-					</div>
 				</div>
-			</footer>
+			</form>
 		</div>
 	</div>
 </template>

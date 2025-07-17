@@ -119,7 +119,7 @@ const prettifyDate = (date: string | null): string => {
 						<span class="font-medium">Deadline: {{ data.deadline != null ? prettifyDate(data.deadline) : 'N/A' }}</span>
 					</div>
 					<div v-if="role === 'candidate'" class="flex items-center">
-						<span class="font-medium">From {{ data.author }}</span>
+						<span class="font-medium">From {{ data.User?.username }}</span>
 					</div>
 				</div>
 			</div>
