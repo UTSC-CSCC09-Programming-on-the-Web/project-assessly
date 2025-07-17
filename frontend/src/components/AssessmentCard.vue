@@ -22,6 +22,12 @@ const handleClick = () => {
 		router.push(`/candidate-dashboard/${props.data.id}/details`);
 	}
 };
+
+const prettifyDate = (date: string | null): string => {
+	if (!date) return 'N/A';
+	const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+	return new Date(date).toLocaleDateString(undefined, options);
+};
 </script>
 
 <template>
@@ -95,10 +101,10 @@ const handleClick = () => {
 				<!-- Footer -->
 				<div class="flex items-center justify-between text-sm text-gray-500">
 					<div class="flex items-center">
-						<span class="font-medium">From {{ data.author }}</span>
+						<span class="font-medium">Deadline: {{ data.deadline != null ? prettifyDate(data.deadline) : 'N/A' }}</span>
 					</div>
-					<div v-if="data.deadline" class="flex items-center">
-						<span class="font-medium">Deadline: {{ data.deadline }}</span>
+					<div v-if="role === 'candidate'" class="flex items-center">
+						<span class="font-medium">From {{ data.author }}</span>
 					</div>
 				</div>
 			</div>

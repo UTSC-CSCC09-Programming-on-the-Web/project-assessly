@@ -1,3 +1,5 @@
+import { Assessment } from "@/types/assessment";
+
 async function handleResponse<T>(res: Response): Promise<T> {
 	return res.json().then((data) => {
 		if (!res.ok) {
@@ -23,3 +25,20 @@ export async function signOut(): Promise<{ message: string }> {
 export async function getMe(): Promise<{ message: string }> {
 	return fetch('/api/oauth/me').then(handleResponse<{ message: string }>);
 }
+
+export async function createAssessment(data: Partial<Assessment>): Promise<Assessment> {
+	return fetch('/api/assessments', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(data),
+	}).then(handleResponse<Assessment>);
+}
+
+export async function getRecruitersAssessment(): Promise<[Assessment]> {
+	return fetch('/api/assessments', {
+		method: 'GET',
+	}).then(handleResponse<[Assessment]>);
+}
+

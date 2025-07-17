@@ -36,6 +36,15 @@ const routes: RouteRecordRaw[] = [
 		},
 	},
 	{
+		path: '/recruiter-dashboard/create',
+		name: 'CreateAssessment',
+		component: () => import('@/views/recruiter-views/RecruiterCreateAssessment.vue'),
+		meta: {
+			title: 'Recruiter Create Assessment - Assessly',
+		},
+		props: true,
+	},
+	{
 		path: '/recruiter-dashboard/:id/details',
 		name: 'RecruiterAssessmentDetails',
 		component: () => import('@/views/recruiter-views/RecruiterAssessmentDetailsView.vue'),
