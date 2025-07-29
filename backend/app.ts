@@ -6,6 +6,7 @@ import { oauthRouter } from './routers/oauth_router.js';
 import { assessmentsRouter } from './routers/assessments_router.js';
 import { assignmentsRouter } from './routers/assignments_router.js';
 import { candidatesRouter } from './routers/candidates_router.js';
+import { tokensRouter } from './routers/tokens_router.js';
 
 // Validate env variables
 const envVars: string[] = [
@@ -44,6 +45,7 @@ app.use('/api/oauth', oauthRouter);
 app.use('/api/assessments', assessmentsRouter);
 app.use('/api/assignments', assignmentsRouter);
 app.use('/api/candidates', candidatesRouter);
+app.use('/api/tokens', tokensRouter);
 
 app.listen(PORT, (err) => {
 	if (err) console.log(err);

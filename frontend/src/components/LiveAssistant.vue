@@ -135,6 +135,7 @@ import { useScreenCapture } from '@/composables/useScreenCapture';
 import { formatLogMessage, getLogLevelColor } from '@/utils/liveapi-utils';
 import type { LiveConfig } from '@/types/liveapi';
 import { SchemaType } from '@google/generative-ai';
+import { getEphemeralToken } from '@/services/api-service';
 
 // Component state
 const apiKey = ref('');
@@ -166,7 +167,7 @@ onMounted(() => {
 // Methods
 const handleConnect = async () => {
 	try {
-		const apiKeyFromEnv = import.meta.env.VITE_GOOGLE_AI_API_KEY;
+		const apiKeyFromEnv = await getEphemeralToken().then((data) => data.tokenName);
 		// Initialize Live API
 		liveAPIInstance = useLiveAPI({
 			apiKey: apiKeyFromEnv,
