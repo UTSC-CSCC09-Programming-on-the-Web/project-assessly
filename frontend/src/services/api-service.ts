@@ -76,3 +76,9 @@ export async function getCandidatesAssessmentDetails(id: string): Promise<Assess
 		method: 'GET',
 	}).then(handleResponse<Assessment>);
 }
+
+export async function getEphemeralToken() {
+	return fetch(`/api/tokens`, {
+		method: 'GET',
+	}).then(handleResponse);
+}
