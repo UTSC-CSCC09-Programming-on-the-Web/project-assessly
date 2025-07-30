@@ -82,3 +82,15 @@ export async function getEphemeralToken() {
 		method: 'GET',
 	}).then(handleResponse);
 }
+
+export async function startStripeCheckoutSession() {
+	return fetch(`/api/stripe/create-checkout-session`, {
+		method: 'POST',
+	}).then(handleResponse);
+}
+
+export async function getSubscriptionStatus() {
+	return fetch(`/api/stripe/subscription-status`, {
+		method: 'GET',
+	}).then(handleResponse);
+}

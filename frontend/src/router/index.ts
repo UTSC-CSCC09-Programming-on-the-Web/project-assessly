@@ -54,35 +54,39 @@ const routes: RouteRecordRaw[] = [
 		props: true,
 	},
 	{
-		path: '/candidate-dashboard/:id/details',
-		name: 'CandidateAssessmentDetails',
-		component: () => import('@/views/candidate-views/CandidateAssessmentDetailsView.vue'),
-		meta: {
-			title: 'Candidate Assessment Details - Assessly',
-		},
-		props: true,
-	},
-	{
 		path: '/candidate-assessment/:id',
 		name: 'CandidateAssessment',
 		component: () => import('@/views/LiveAssistantView.vue'),
 		props: true,
 	},
 	{
-		path: '/manage-subscription',
-		name: 'ManageSubscription',
-		component: () => import('@/views/subscription-views/ManageSubscriptionView.vue'),
-		meta: {
-			title: 'Manage Subscription - Assessly',
-		},
-	},
-	{
-		path: '/purchase-subscription',
-		name: 'PurchaseSubscription',
-		component: () => import('@/views/subscription-views/PurchaseSubscriptionView.vue'),
-		meta: {
-			title: 'Purchase Subscription - Assessly',
-		},
+		path: '/subscription',
+		children: [
+			{
+				path: 'manage',
+				name: 'ManageSubscription',
+				component: () => import('@/views/subscription-views/ManageSubscriptionView.vue'),
+				meta: {
+					title: 'Manage Subscription - Assessly',
+				},
+			},
+			{
+				path: 'purchase',
+				name: 'PurchaseSubscription',
+				component: () => import('@/views/subscription-views/PurchaseSubscriptionView.vue'),
+				meta: {
+					title: 'Purchase Subscription - Assessly',
+				},
+			},
+			{
+				path: 'success',
+				name: 'SuccessSubscription',
+				component: () => import('@/views/subscription-views/SuccessSubscriptionView.vue'),
+				meta: {
+					title: 'Success Subscription - Assessly',
+				},
+			},
+		],
 	},
 	// Redirect from old paths
 	{

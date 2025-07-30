@@ -11,4 +11,13 @@ export const UserModel = sequelize.define('User', {
 		type: DataTypes.STRING,
 		allowNull: false,
 	},
+	stripeCustomerId: {
+		type: DataTypes.STRING,
+		allowNull: true,
+	},
+	isSubscribed: {
+		type: DataTypes.BOOLEAN,
+		defaultValue: false,
+		allowNull: true,
+	},
 });

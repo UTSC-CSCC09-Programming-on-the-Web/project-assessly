@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { isAuthenticated } from '../middleware/auth.js';
+import { isSubscribed } from '../middleware/auth.js';
 import { AssessmentModel } from '../models/assessments_model.js';
 import { AssignmentModel } from '../models/assignments_model.js';
 import { extractTokenFromReq } from '../utils/token-helpers.js';
@@ -8,7 +8,7 @@ import { extractTokenFromReq } from '../utils/token-helpers.js';
 
 export const assessmentsRouter: Router = Router();
 
-assessmentsRouter.post("/", isAuthenticated, async (req, res) => {
+assessmentsRouter.post("/", isSubscribed, async (req, res) => {
     const { title, summary, description, time_limit, deadline } = req.body;
 
     if (!title || !summary || !description) {
@@ -31,7 +31,7 @@ assessmentsRouter.post("/", isAuthenticated, async (req, res) => {
     }
 });
 
-assessmentsRouter.get("/", isAuthenticated, async (req, res) => {
+assessmentsRouter.get("/", isSubscribed, async (req, res) => {
     try {
         const token = await extractTokenFromReq(req);
         const assessments = await AssessmentModel.findAll({
@@ -45,7 +45,7 @@ assessmentsRouter.get("/", isAuthenticated, async (req, res) => {
     }
 });
 
-assessmentsRouter.get("/:id", isAuthenticated, async (req, res) => {
+assessmentsRouter.get("/:id", isSubscribed, async (req, res) => {
     try {
         const token = await extractTokenFromReq(req);
         const assessment = await AssessmentModel.findOne({
@@ -64,7 +64,7 @@ assessmentsRouter.get("/:id", isAuthenticated, async (req, res) => {
 });
 
 
-assessmentsRouter.delete("/:id", isAuthenticated, async (req, res) => {
+assessmentsRouter.delete("/:id", isSubscribed, async (req, res) => {
     try {
         const { id } = req.params;
         const assessment = await AssessmentModel.findByPk(id);

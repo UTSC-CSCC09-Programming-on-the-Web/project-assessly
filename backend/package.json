@@ -19,7 +19,8 @@
 		"googleapis": "^153.0.0",
 		"nodemon": "^3.1.10",
 		"pg": "^8.16.3",
-		"sequelize": "^6.37.7"
+		"sequelize": "^6.37.7",
+		"stripe": "^18.3.0"
 	},
 	"devDependencies": {
 		"@types/express": "^5.0.3",
