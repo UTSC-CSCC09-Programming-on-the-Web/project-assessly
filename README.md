@@ -7,6 +7,9 @@
 | Ahmad Hakim | ahmad.hakim@mail.utoronto.ca | hakimahm |
 | Ansh Aneel  | ansh.aneel@mail.utoronto.ca  | aneelans |
 
+## Website
+https://assessly.website 
+
 ## Project Description
 
 **Assessly** will let hiring teams set up custom developer assessments and let candidates complete them, capturing their screen activity and AI tool usage as they tackle a given task. A built-in voice assistant reads the prompt aloud and answers questions on demand, ensuring candidates stay focused while maintaining a clear record of their thought process. Recruiters can tailor each assessment’s criteria to match their needs, and companies subscribe to monthly tiered plans based on the number of assessments and candidates they require. After each session, hiring managers simply log into a dashboard to see a candidate’s summary of performance, making it easy to identify the most productive, AI-savvy developers.
