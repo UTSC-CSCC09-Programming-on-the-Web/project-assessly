@@ -19,6 +19,12 @@ const toggleTimer = () => {
     resumeTimer();
   }
 };
+
+// Show warning when time is running low
+if (isWarning.value) {
+  // You could show a toast notification here
+  console.log('Warning: Time is running low!');
+}
 </script>
 
 <template>

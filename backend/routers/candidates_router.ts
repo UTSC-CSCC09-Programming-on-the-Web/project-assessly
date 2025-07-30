@@ -62,3 +62,38 @@ candidatesRouter.get("/assessments/:id", isAuthenticated, async (req, res) => {
         return res.status(400).json({ error: e.message || "An error occurred while creating the assignment." });
     }
 });
+
+candidatesRouter.post("/assessments/:id/complete", isAuthenticated, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const token = await extractTokenFromReq(req);
+        const email = token?.User.email;
+
+        // Find the assignment for this candidate and assessment
+        const assignment = await AssignmentModel.findOne({
+            where: { 
+                AssessmentId: id,
+                email: email
+            }
+        });
+
+        if (!assignment) {
+            return res.status(404).json({ error: "Assignment not found." });
+        }
+
+        // Mark the assignment as completed
+        await assignment.update({
+            is_completed: true,
+            grade: req.body.grade || null, // Optional grade if provided
+            completed_at: new Date(),
+            submitted_via: req.body.submitted_via || 'manual' // 'manual' or 'timeout'
+        });
+
+        return res.status(200).json({ 
+            message: "Assessment completed successfully.",
+            assignment 
+        });
+    } catch (e) {
+        return res.status(400).json({ error: e.message || "An error occurred while completing the assessment." });
+    }
+});

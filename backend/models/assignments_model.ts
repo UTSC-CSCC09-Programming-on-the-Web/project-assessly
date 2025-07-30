@@ -16,6 +16,14 @@ export const AssignmentModel = sequelize.define('Assignment', {
         type: DataTypes.FLOAT,
         allowNull: true,
     },
+    completed_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
+    submitted_via: {
+        type: DataTypes.ENUM('manual', 'timeout'),
+        allowNull: true,
+    },
 }, {
   indexes: [
     {

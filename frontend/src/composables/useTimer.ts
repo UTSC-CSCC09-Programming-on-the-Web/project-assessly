@@ -1,4 +1,6 @@
 import { ref, computed } from 'vue';
+import { completeAssessment } from '@/services/api-service';
+import { useRouter } from 'vue-router';
 
 interface TimerState {
   isActive: boolean;
@@ -73,10 +75,27 @@ export function useTimer() {
     timerState.value.timeRemaining = timerState.value.duration * 60;
   };
 
-  const handleTimeUp = () => {
+  const handleTimeUp = async () => {
     // This can be customized based on your needs
     console.log('Time is up for assessment:', timerState.value.assessmentId);
-    // You could emit an event, show a notification, or automatically submit the assessment
+    
+    if (timerState.value.assessmentId) {
+      try {
+        // Automatically complete the assessment when time is up
+        await completeAssessment(timerState.value.assessmentId, undefined, 'timeout');
+        
+        // Show notification to user
+        alert('Time is up! Your assessment has been automatically submitted to the recruiter.');
+        
+        // Redirect to candidate dashboard
+        const router = useRouter();
+        router.push('/candidate-dashboard');
+        
+      } catch (error) {
+        console.error('Failed to complete assessment:', error);
+        alert('Failed to submit assessment. Please contact support.');
+      }
+    }
   };
 
   const formattedTime = computed(() => {

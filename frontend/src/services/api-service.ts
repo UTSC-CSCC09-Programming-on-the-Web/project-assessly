@@ -82,3 +82,19 @@ export async function getEphemeralToken() {
 		method: 'GET',
 	}).then(handleResponse);
 }
+
+export async function completeAssessment(id: string, grade?: number, submitted_via?: 'manual' | 'timeout'): Promise<{ message: string; assignment: any }> {
+	return fetch(`/api/candidates/assessments/${id}/complete`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ grade, submitted_via }),
+	}).then(handleResponse<{ message: string; assignment: any }>);
+}
+
+export async function getAssessmentSubmissions(id: string): Promise<{ submissions: any[]; metrics: any }> {
+	return fetch(`/api/assessments/${id}/submissions`, {
+		method: 'GET',
+	}).then(handleResponse<{ submissions: any[]; metrics: any }>);
+}
