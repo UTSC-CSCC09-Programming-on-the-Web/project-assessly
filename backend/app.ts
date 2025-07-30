@@ -7,6 +7,7 @@ import { assessmentsRouter } from './routers/assessments_router.js';
 import { assignmentsRouter } from './routers/assignments_router.js';
 import { candidatesRouter } from './routers/candidates_router.js';
 import { tokensRouter } from './routers/tokens_router.js';
+import { stripeRouter } from './routers/stripe_router.js';
 
 // Validate env variables
 const envVars: string[] = [
@@ -17,6 +18,11 @@ const envVars: string[] = [
 	'OAUTH_CLIENT_ID',
 	'OAUTH_CLIENT_SECRET',
 	'OAUTH_REDIRECT_URL',
+	'FRONTEND_URL',
+	'VITE_GOOGLE_AI_API_KEY',
+	'STRIPE_SECRET_KEY',
+	'STRIPE_SUBSCRIPTION_PRICE_ID',
+	'STRIPE_WEBHOOK_SECRET'
 ];
 
 for (const envVar of envVars) {
@@ -27,6 +33,9 @@ for (const envVar of envVars) {
 
 export const app: express.Express = express();
 const PORT: number = 3000;
+
+app.use('/api/stripe/webhook', bodyParser.raw({ type: 'application/json' }));
+
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -46,6 +55,7 @@ app.use('/api/assessments', assessmentsRouter);
 app.use('/api/assignments', assignmentsRouter);
 app.use('/api/candidates', candidatesRouter);
 app.use('/api/tokens', tokensRouter);
+app.use('/api/stripe', stripeRouter);
 
 app.listen(PORT, (err) => {
 	if (err) console.log(err);

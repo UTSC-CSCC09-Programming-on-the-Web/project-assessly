@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { siteConfig } from '@/data/siteConfig';
 import HeaderComponent from './components/HeaderComponent.vue';
-import { getMe } from './services/api-service';
+import { getMe, getSubscriptionStatus } from './services/api-service';
 
 const isSignedIn = ref(true);
-const isSubscribed = ref(true);
+const isSubscribed = ref(false);
 const router = useRouter();
+const route = useRoute();
 
 const isHeaderReady = ref(true);
 
@@ -18,10 +19,25 @@ function handleSignout() {
 
 onMounted(async () => {
 	await getMe()
-		.then(() => {
+		.then(async () => {
 			isSignedIn.value = true;
-			isHeaderReady.value = true;
-			router.push('candidate-dashboard');
+			//catch when unauthorized
+			await getSubscriptionStatus().then((data) => {
+				isSubscribed.value = data.isSubscribed;
+				isHeaderReady.value = true;
+			}
+			).catch((err) => {
+				if (err.status === 401) {
+					isSubscribed.value = false;
+					isHeaderReady.value = true;
+				} else {
+					alert(err.message);
+				}
+			});
+			const currentPath = route.path;
+            if (currentPath === '/') {
+                isSubscribed.value ? router.push('recruiter-dashboard') : router.push('candidate-dashboard');
+            }
 		})
 		.catch((er) => {
 			isSignedIn.value = false;

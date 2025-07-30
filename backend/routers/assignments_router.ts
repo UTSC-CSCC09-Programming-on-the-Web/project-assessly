@@ -1,11 +1,10 @@
 import { Router } from 'express';
-import { isAuthenticated } from '../middleware/auth.js';
-import { extractTokenFromReq } from '../utils/token-helpers.js';
+import { isSubscribed } from '../middleware/auth.js';
 import { AssignmentModel } from '../models/assignments_model.js';
 
 export const assignmentsRouter: Router = Router();
 
-assignmentsRouter.post("/:id", isAuthenticated, async (req, res) => {
+assignmentsRouter.post("/:id", isSubscribed, async (req, res) => {
     const email = req.body.email;
     const { id } = req.params;
     if (!email) {
