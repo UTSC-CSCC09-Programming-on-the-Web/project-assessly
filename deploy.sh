@@ -76,7 +76,7 @@ if [ -f "$HOME/project-assessly/backend/.env" ]; then
     log_info "Copying development .env file..."
     cp "$HOME/project-assessly/backend/.env" "$APP_DIR/backend/.env"
     cp "$HOME/project-assessly/backend/.env" "$APP_DIR/backend/.env.production"
-    
+    cp "$HOME/project-assessly/backend/.env" "$APP_DIR/.env"
     # Update production-specific settings
     sed -i 's/DB_HOST=localhost/DB_HOST=postgres/' "$APP_DIR/backend/.env.production"
     sed -i 's|FRONTEND_URL=http://localhost:5173|FRONTEND_URL=http://'"$(curl -s ifconfig.me)"'|' "$APP_DIR/backend/.env.production"
@@ -98,14 +98,14 @@ log_step "7. Waiting for services to be ready..."
 sleep 60
 
 log_step "8. Checking service health..."
-if docker-compose -f docker-compose.prod.yml ps | grep -q "Up"; then
+if docker-compose ps | grep -q "Up"; then
     log_info "✅ Deployment successful!"
     log_info "Frontend: http://$DOMAIN"
     log_info "Backend API: http://$DOMAIN/api"
     log_info "Database: localhost:5432"
 else
     log_error "❌ Deployment failed! Check logs:"
-    docker-compose -f docker-compose.prod.yml logs
+    docker-compose logs
     exit 1
 fi
 
