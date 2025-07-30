@@ -8,7 +8,7 @@ echo "🚀 Starting Assessly Full Stack Deployment..."
 # Configuration
 REPO_URL="https://github.com/UTSC-CSCC09-Programming-on-the-Web/project-assessly.git"
 APP_DIR="/opt/assessly"
-DOMAIN="your-domain.com"
+DOMAIN="assessly.website"
 
 # Colors for output
 RED='\033[0;31m'
