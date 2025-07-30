@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { siteConfig } from '@/data/siteConfig';
 import GoogleSignInButton from './GoogleSignInButton.vue';
+import GlobalTimer from './GlobalTimer.vue';
 import { signOut } from '@/services/api-service';
 
 const props = defineProps<{
@@ -43,6 +44,9 @@ const routeName = computed(() => route.name);
 				<!-- Navigation Links -->
 				<div class="hidden md:block">
 					<div class="ml-10 flex items-baseline space-x-4">
+						<!-- Global Timer -->
+						<GlobalTimer />
+						
 						<div v-if="getIsSignedIn">
 							<router-link
 								to="/recruiter-dashboard"
@@ -67,6 +71,7 @@ const routeName = computed(() => route.name);
 							>
 								Candidate Dashboard
 							</router-link>
+
 							<router-link
 								to="/subscription/manage"
 								class="px-3 py-2 rounded-md text-sm font-medium transition-colors"

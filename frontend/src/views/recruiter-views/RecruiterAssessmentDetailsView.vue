@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import MarkdownIt from 'markdown-it';
 import { Assessment } from '@/types/assessment';
 import { createAssignment, getRecruitersAssessmentDetails } from '@/services/api-service';
+import UserSubmissionList from '@/components/UserSubmissionList.vue';
 
 interface Props {
 	id: string;
@@ -196,6 +197,11 @@ onMounted(async () => {
 			<article class="prose prose-lg max-w-none mb-12">
 				<div v-html="renderedContent" class="markdown-content"></div>
 			</article>
+
+			<!-- User Submissions -->
+			<div class="mt-12">
+				<UserSubmissionList :assessment-id="props.id" />
+			</div>
 		</div>
 	</div>
 

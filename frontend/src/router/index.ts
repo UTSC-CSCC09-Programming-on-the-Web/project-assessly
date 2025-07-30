@@ -88,6 +88,7 @@ const routes: RouteRecordRaw[] = [
 			},
 		],
 	},
+
 	// Redirect from old paths
 	{
 		path: '/candidate-dashboard/:id/details',

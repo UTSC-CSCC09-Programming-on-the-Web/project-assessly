@@ -3,7 +3,9 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { siteConfig } from '@/data/siteConfig';
 import HeaderComponent from './components/HeaderComponent.vue';
+
 import { getMe, getSubscriptionStatus } from './services/api-service';
+
 
 const isSignedIn = ref(true);
 const isSubscribed = ref(false);
