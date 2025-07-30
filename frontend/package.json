@@ -6,7 +6,10 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "vue-tsc && vite build",
-		"preview": "vite preview"
+		"preview": "vite preview",
+    		"build:prod": "NODE_ENV=production vue-tsc && vite build",
+    		"build:no-check": "vite build --mode production --no-types"
+
 	},
 	"repository": {
 		"type": "git",
@@ -22,6 +25,7 @@
 	"homepage": "https://github.com/UTSC-CSCC09-Programming-on-the-Web/project-assessly#readme",
 	"dependencies": {
 		"@google/generative-ai": "^0.24.1",
+		"@stripe/stripe-js": "^7.7.0",
 		"@types/markdown-it": "^14.1.2",
 		"eventemitter3": "^5.0.1",
 		"lodash": "^4.17.21",

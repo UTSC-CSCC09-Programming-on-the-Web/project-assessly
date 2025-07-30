@@ -73,7 +73,7 @@ const routeName = computed(() => route.name);
 							</router-link>
 
 							<router-link
-								to="/manage-subscription"
+								to="/subscription/manage"
 								class="px-3 py-2 rounded-md text-sm font-medium transition-colors"
 								:class="
 									routeName === 'ManageSubscription'
@@ -85,7 +85,7 @@ const routeName = computed(() => route.name);
 								Manage Subscription
 							</router-link>
 							<router-link
-								to="/purchase-subscription"
+								to="/subscription/purchase"
 								class="px-3 py-2 rounded-md text-sm font-medium transition-colors"
 								:class="
 									routeName === 'PurchaseSubscription'
