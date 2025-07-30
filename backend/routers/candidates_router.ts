@@ -81,12 +81,35 @@ candidatesRouter.post("/assessments/:id/complete", isAuthenticated, async (req, 
             return res.status(404).json({ error: "Assignment not found." });
         }
 
-        // Mark the assignment as completed
+        // Calculate real metrics from request body or use defaults
+        const timeTakenMinutes = req.body.time_taken_minutes || 0;
+        const questionsAnswered = req.body.questions_answered || 0;
+        const totalQuestions = req.body.total_questions || 10;
+        const aiToolUsage = req.body.ai_tool_usage_count || 0;
+        const externalResources = req.body.external_resource_usage || 0;
+        
+        // Calculate scores (simple calculation - can be enhanced later)
+        const accuracyPercentage = totalQuestions > 0 ? (questionsAnswered / totalQuestions) * 100 : 0;
+        const codeQualityScore = req.body.code_quality_score || (accuracyPercentage / 10); // Simple mapping
+        const communicationScore = req.body.communication_score || 7.5; // Default score
+        const problemSolvingScore = req.body.problem_solving_score || (accuracyPercentage / 10);
+        const overallPerformance = req.body.overall_performance || accuracyPercentage;
+
+        // Mark the assignment as completed with real metrics
         await assignment.update({
             is_completed: true,
-            grade: req.body.grade || null, // Optional grade if provided
+            grade: req.body.grade || overallPerformance,
             completed_at: new Date(),
-            submitted_via: req.body.submitted_via || 'manual' // 'manual' or 'timeout'
+            submitted_via: req.body.submitted_via || 'manual',
+            time_taken_minutes: timeTakenMinutes,
+            questions_answered: questionsAnswered,
+            total_questions: totalQuestions,
+            ai_tool_usage_count: aiToolUsage,
+            external_resource_usage: externalResources,
+            code_quality_score: codeQualityScore,
+            communication_score: communicationScore,
+            problem_solving_score: problemSolvingScore,
+            overall_performance: overallPerformance
         });
 
         return res.status(200).json({ 

@@ -1,5 +1,13 @@
 <template>
 	<div class="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
+		<!-- Assessment Context Display -->
+		<div v-if="assessment" class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+			<h3 class="text-lg font-semibold text-blue-900 mb-2">Current Assessment</h3>
+			<div class="text-sm text-blue-800">
+				<strong>Title:</strong> {{ assessment.title }}<br>
+				<strong>Summary:</strong> {{ assessment.summary }}
+			</div>
+		</div>
 		<!-- Header -->
 		<div class="flex items-center justify-between mb-6">
 			<h2 class="text-2xl font-bold text-gray-900">AI Live Assistant</h2>
@@ -136,6 +144,14 @@ import { formatLogMessage, getLogLevelColor } from '@/utils/liveapi-utils';
 import type { LiveConfig } from '@/types/liveapi';
 import { SchemaType } from '@google/generative-ai';
 import { getEphemeralToken } from '@/services/api-service';
+import type { Assessment } from '@/types/assessment';
+
+// Props
+interface Props {
+	assessment?: Assessment;
+}
+
+const props = defineProps<Props>();
 
 // Component state
 const apiKey = ref('');
@@ -333,12 +349,38 @@ const getLogColor = (type: string): string => {
 };
 
 // Assessment-specific configuration
-const getAssessmentConfig = (): LiveConfig => ({
-	model: 'models/gemini-2.0-flash-exp',
-	systemInstruction: {
-		parts: [
-			{
-				text: `You are an AI assistant for Assessly, an assessment management platform. You help users with:
+const getAssessmentConfig = (): LiveConfig => {
+	const assessmentContext = props.assessment ? `
+CURRENT ASSESSMENT CONTEXT:
+Title: ${props.assessment.title}
+Summary: ${props.assessment.summary}
+Description: ${props.assessment.description || 'No detailed description provided.'}
+Time Limit: ${props.assessment.time_limit ? `${props.assessment.time_limit} minutes` : 'No time limit'}
+Deadline: ${props.assessment.deadline ? new Date(props.assessment.deadline).toLocaleDateString() : 'No deadline'}
+
+ASSESSMENT INSTRUCTIONS:
+You are helping a candidate complete this specific assessment. Your role is to:
+1. Guide them through the problem-solving process
+2. Ask them to explain their thinking and steps
+3. Provide hints and guidance when they're stuck
+4. Ensure they understand the requirements
+5. Help them stay on track with the assessment goals
+
+IMPORTANT: Always encourage the candidate to explain their reasoning and thought process. Ask questions like:
+- "What's your first step in solving this problem?"
+- "Can you walk me through your approach?"
+- "What are you thinking about right now?"
+- "How did you arrive at that conclusion?"
+
+Focus on the specific assessment content above and help the candidate complete it successfully while documenting their problem-solving process.
+` : '';
+
+	return {
+		model: 'models/gemini-2.0-flash-exp',
+		systemInstruction: {
+			parts: [
+				{
+					text: `You are an AI assistant for Assessly, an assessment management platform. You help users with:
       
       - Finding and filtering assessments
       - Understanding assessment requirements
@@ -346,10 +388,12 @@ const getAssessmentConfig = (): LiveConfig => ({
       - Answering questions about assessment formats
       - Helping with technical and research assessments
       
-      Be helpful, concise, and focused on education and assessment topics. If users ask about topics outside assessments, politely redirect them back to assessment-related help.`,
-			},
-		],
-	},
+      Be helpful, concise, and focused on education and assessment topics. If users ask about topics outside assessments, politely redirect them back to assessment-related help.
+      
+      ${assessmentContext}`,
+				},
+			],
+		},
 	generationConfig: {
 		responseModalities: 'audio',
 		speechConfig: {
@@ -386,10 +430,32 @@ const getAssessmentConfig = (): LiveConfig => ({
 						properties: {},
 					},
 				},
+				{
+					name: 'track_progress',
+					description: 'Track the candidate\'s progress on the assessment',
+					parameters: {
+						type: SchemaType.OBJECT,
+						properties: {
+							step: {
+								type: SchemaType.STRING,
+								description: 'Current step or milestone in the assessment',
+							},
+							explanation: {
+								type: SchemaType.STRING,
+								description: 'Candidate\'s explanation of their current approach',
+							},
+							confidence: {
+								type: SchemaType.STRING,
+								description: 'Candidate\'s confidence level (low/medium/high)',
+							},
+						},
+					},
+				},
 			],
 		},
 	],
-});
+	};
+};
 </script>
 
 <style scoped>
