@@ -113,6 +113,7 @@ export async function getAssessmentSubmissions(id: string): Promise<{ submission
 	return fetch(`/api/assessments/${id}/submissions`, {
 		method: 'GET',
 	}).then(handleResponse<{ submissions: any[]; metrics: any }>);
+}
 
 export async function startStripeCheckoutSession() {
 	return fetch(`/api/stripe/create-checkout-session`, {
@@ -124,5 +125,4 @@ export async function getSubscriptionStatus() {
 	return fetch(`/api/stripe/subscription-status`, {
 		method: 'GET',
 	}).then(handleResponse);
-
 }
