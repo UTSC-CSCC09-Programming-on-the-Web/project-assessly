@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "tsx --watch app.ts"
+		"dev": "nodemon --exec tsx app.ts --ext ts,js --ignore node_modules/ --ignore *.log --delay 1000ms"
 	},
 	"keywords": [],
 	"author": "",
@@ -17,6 +17,7 @@
 		"dotenv": "^17.2.0",
 		"express": "^5.1.0",
 		"googleapis": "^153.0.0",
+		"nodemon": "^3.1.10",
 		"pg": "^8.16.3",
 		"sequelize": "^6.37.7"
 	},
