@@ -1,5 +1,5 @@
 # Multi-stage build for production
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -15,6 +15,9 @@ RUN npm ci
 
 # Copy source code
 COPY . .
+
+# Set NODE_OPTIONS for legacy OpenSSL provider (fixes crypto.hash issue)
+ENV NODE_OPTIONS="--openssl-legacy-provider"
 
 # Build the application
 RUN npm run build || npx vite build --mode production
@@ -42,8 +45,6 @@ RUN chown -R frontend:nginx /var/run/nginx.pid
 
 USER frontend
 
-# Expose port
 EXPOSE 80
 
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
