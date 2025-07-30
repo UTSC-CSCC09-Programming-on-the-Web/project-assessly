@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { siteConfig } from '@/data/siteConfig';
 import HeaderComponent from './components/HeaderComponent.vue';
@@ -17,6 +17,15 @@ const isHeaderReady = ref(true);
 function handleSignout() {
 	isSignedIn.value = false;
 	router.push('/');
+}
+
+async function refreshSubscriptionStatus() {
+	try {
+		const result = await getSubscriptionStatus();
+		isSubscribed.value = result.isSubscribed;
+	} catch (error) {
+		console.error('Error refreshing subscription status:', error);
+	}
 }
 
 onMounted(async () => {
@@ -49,6 +58,25 @@ onMounted(async () => {
 				alert(er.message);
 			}
 		});
+});
+
+// Watch for route changes to refresh subscription status
+watch(() => route.path, async (newPath) => {
+	// Refresh subscription status when navigating away from success page
+	if (newPath !== '/subscription/success' && isSignedIn.value) {
+		await refreshSubscriptionStatus();
+	}
+});
+
+// Listen for subscription activation event
+window.addEventListener('subscription-activated', async () => {
+	console.log('🎉 Subscription activated event received, refreshing status...');
+	await refreshSubscriptionStatus();
+	
+	// Force a page reload to ensure all components update
+	setTimeout(() => {
+		window.location.reload();
+	}, 1000);
 });
 </script>
 

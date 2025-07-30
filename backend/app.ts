@@ -51,11 +51,11 @@ try {
 }
 
 app.use('/api/oauth', oauthRouter);
+app.use('/api/stripe', stripeRouter);
 app.use('/api/assessments', assessmentsRouter);
 app.use('/api/assignments', assignmentsRouter);
 app.use('/api/candidates', candidatesRouter);
 app.use('/api/tokens', tokensRouter);
-app.use('/api/stripe', stripeRouter);
 
 app.listen(PORT, (err) => {
 	if (err) console.log(err);

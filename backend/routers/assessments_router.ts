@@ -87,6 +87,7 @@ assessmentsRouter.delete("/:id", isSubscribed, async (req, res) => {
 });
 
 assessmentsRouter.get("/:id/submissions", isAuthenticated, async (req, res) => {
+    console.log('🎯 Assessments submissions endpoint hit with ID:', req.params.id);
     try {
         const { id } = req.params;
         const token = await extractTokenFromReq(req);
