@@ -47,6 +47,11 @@ app.use('/api/assignments', assignmentsRouter);
 app.use('/api/candidates', candidatesRouter);
 app.use('/api/tokens', tokensRouter);
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+	res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
 app.listen(PORT, (err) => {
 	if (err) console.log(err);
 	else console.log('HTTP server on http://localhost:%s', PORT);
