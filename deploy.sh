@@ -109,6 +109,8 @@ else
     exit 1
 fi
 
+docker-compose down
+
 log_step "9. Setting up SSL (optional)..."
 read -p "Do you want to set up SSL with Let's Encrypt? (y/n): " -n 1 -r
 echo
@@ -125,6 +127,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     sudo crontab mycron
     rm mycron
 fi
+
+docker-compose up -d
 
 log_step "10. Setting up firewall..."
 sudo ufw allow 22    # SSH
