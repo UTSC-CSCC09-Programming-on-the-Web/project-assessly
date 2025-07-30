@@ -25,5 +25,7 @@ export const AssignmentModel = sequelize.define('Assignment', {
   ],
 });
 
-AssignmentModel.belongsTo(AssessmentModel);
+AssignmentModel.belongsTo(AssessmentModel, {
+    onDelete: 'CASCADE'
+});
 AssessmentModel.hasMany(AssignmentModel);
