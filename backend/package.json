@@ -4,6 +4,9 @@
 	"type": "module",
 	"scripts": {
 		"dev": "nodemon --exec tsx app.ts --ext ts,js --ignore node_modules/ --ignore *.log --delay 1000ms"
+		"build": "tsc",
+    		"start": "tsx app.ts",
+    		"start:prod": "NODE_ENV=production tsx app.ts"
 	},
 	"keywords": [],
 	"author": "",
