@@ -17,7 +17,7 @@ RUN npm ci
 COPY . .
 
 # Build the application
-RUN npm run build -- --mode production --skipLibCheck || npm run build:no-check
+RUN npm run build || npx vite build --mode production
 
 # Production stage with nginx
 FROM nginx:alpine AS production
