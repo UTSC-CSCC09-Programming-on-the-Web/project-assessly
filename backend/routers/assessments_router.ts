@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { isSubscribed } from '../middleware/auth.js';
+import { isSubscribed, isAuthenticated } from '../middleware/auth.js';
 import { AssessmentModel } from '../models/assessments_model.js';
 import { AssignmentModel } from '../models/assignments_model.js';
 import { extractTokenFromReq } from '../utils/token-helpers.js';
