@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { siteConfig } from '@/data/siteConfig';
 import HeaderComponent from './components/HeaderComponent.vue';
+
 import { getMe } from './services/api-service';
 
 const isSignedIn = ref(true);

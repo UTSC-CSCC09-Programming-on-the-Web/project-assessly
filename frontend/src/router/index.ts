@@ -84,6 +84,7 @@ const routes: RouteRecordRaw[] = [
 			title: 'Purchase Subscription - Assessly',
 		},
 	},
+
 	// Redirect from old paths
 	{
 		path: '/candidate-dashboard/:id/details',

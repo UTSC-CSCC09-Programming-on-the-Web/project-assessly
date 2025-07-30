@@ -5,6 +5,7 @@ import MarkdownIt from 'markdown-it';
 import { Assessment } from '@/types/assessment';
 import { getCandidatesAssessmentDetails } from '@/services/api-service';
 
+
 interface Props {
 	id: string;
 	completingAssessment?: boolean;
@@ -68,6 +69,8 @@ const handleStartAssessment = async () => {
 		error.value = err.message || 'Failed to start assessment';
 	}
 };
+
+
 
 onMounted(async () => {
 	await getCandidatesAssessmentDetails(props.id)
