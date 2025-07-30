@@ -12,7 +12,7 @@ export const AssessmentModel = sequelize.define('Assessment', {
         allowNull: false,
     },
     description: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
     },
     time_limit: {
