@@ -113,6 +113,7 @@ export async function getAssessmentSubmissions(id: string): Promise<{ submission
 	return fetch(`/api/assessments/${id}/submissions`, {
 		method: 'GET',
 	}).then(handleResponse<{ submissions: any[]; metrics: any }>);
+}
 
 export async function startStripeCheckoutSession() {
 	return fetch(`/api/stripe/create-checkout-session`, {
@@ -124,5 +125,32 @@ export async function getSubscriptionStatus() {
 	return fetch(`/api/stripe/subscription-status`, {
 		method: 'GET',
 	}).then(handleResponse);
+}
 
+export async function getSubscriptionDetails() {
+	return fetch(`/api/stripe/subscription-details`, {
+		method: 'GET',
+	}).then(handleResponse);
+}
+
+export async function createPortalSession() {
+	return fetch(`/api/stripe/create-portal-session`, {
+		method: 'POST',
+	}).then(handleResponse);
+}
+
+export async function cancelSubscription() {
+	return fetch(`/api/stripe/cancel-subscription`, {
+		method: 'POST',
+	}).then(handleResponse);
+}
+
+export async function verifyCheckout(sessionId: string) {
+	return fetch(`/api/stripe/verify-checkout`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ session_id: sessionId }),
+	}).then(handleResponse);
 }
