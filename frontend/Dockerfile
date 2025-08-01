@@ -31,9 +31,8 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Create non-root user
-RUN addgroup -g 1001 -S nginx && \
-    adduser -S frontend -u 1001 -G nginx
+# Create non-root user (nginx group already exists in nginx:alpine)
+RUN adduser -S frontend -u 1001 -G nginx
 
 # Change ownership
 RUN chown -R frontend:nginx /usr/share/nginx/html
